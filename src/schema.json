@@ -1,0 +1,95 @@
+
+ [
+	{
+		"_id": "_collection",
+		"name": "person"
+	},
+	{
+		"_id": "_collection",
+		"name": "post"
+	},
+	{
+		"_id": "_collection",
+		"name": "comment"
+	},
+
+
+
+
+	{
+		"_id": "_predicate",
+		"name": "person/handle",
+		"doc": "The person's unique handle",
+		"unique": true,
+		"type": "string"
+	},
+	{
+		"_id": "_predicate",
+		"name": "person/fullName",
+		"doc": "The person's full name.",
+		"type": "string"
+	},
+	{
+		"_id": "_predicate",
+		"name": "person/age",
+		"doc": "The person's age in years",
+		"type": "int"
+	},
+	{
+		"_id": "_predicate",
+		"name": "person/follows",
+		"doc": "Any person this subject follows",
+		"multi": true,
+		"type": "ref",
+		"restrictCollection": "person"
+	},
+	{
+		"_id": "_predicate",
+		"name": "person/posts",
+		"doc": "Person's posts",
+		"multi": true,
+		"type": "ref",
+		"restrictCollection": "post"
+	},
+	{
+		"_id": "_predicate",
+		"name": "post/message",
+		"doc": "A post message",
+		"type": "string"
+	},
+	{
+		"_id": "_predicate",
+		"name": "post/person",
+		"doc": "A reference to post owner",
+		"type": "ref",
+		"restrictCollection": "person"
+	},
+	{
+		"_id": "_predicate",
+		"name": "post/comments",
+		"doc": "A reference to comments on a post",
+		"type": "ref",
+		"multi": true,
+		"restrictCollection": "comment"
+	},
+	{
+		"_id": "_predicate",
+		"name": "post/likes",
+		"doc": "Number of on the likes post has recieved.",
+		"type": "int"
+	},
+	{
+		"_id": "_predicate",
+		"name": "comment/message",
+		"doc": "A comment's content(message).",
+		"type": "string"
+	},
+	{
+		"_id": "_predicate",
+		"name": "comment/person",
+		"doc": "A reference to the person that made the comment",
+		"type": "ref",
+		"restrictCollection": "person"
+	}
+]
+

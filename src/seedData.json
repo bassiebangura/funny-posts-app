@@ -1,0 +1,137 @@
+//Transaction to add sample data
+// [
+// 	"johnson suleman",
+// 	"ernest koroma",
+// 	"achie paul",
+// 	"julius agaowa",
+// 	"keili kanagboh"
+// ],
+
+[
+	
+	{
+		"_id": "person$jsuleman",
+		"handle": "jsuleman",
+		"fullName": "Johnson Suleman",
+		"age": 25,
+        "follows": ["person$ekoroma", "person$apaul", "person$jagaowa"],
+        "posts": ["post$jsuleman1"]
+	},
+	{
+		"_id": "person$ekoroma",
+		"handle": "ekoroma",
+		"fullName": "Ernest Koroma",
+		"age": 63,
+        "follows": ["person$jsuleman", "person$apaul", "person$jagaowa"],
+        "posts": [
+            "post$ekoroma1"
+        ]
+	},
+	{
+		"_id": "person$apaul",
+		"handle": "apaul",
+		"fullName": "Achie Paul",
+		"age": 34,
+        "follows": ["person$jsuleman", "person$ekoroma", "person$kkanagboh"],
+        "posts": [
+            "post$paul1"
+        ]
+	},
+	{
+		"_id": "person$jagaowa",
+		"handle": "jagaowa",
+		"fullName": "Julius Agaowa",
+		"age": 70,
+        "follows": ["person$kkanagboh", "person$apaul", "person$ekoroma"],
+        "posts": [
+            "post$jagaowa1"
+        ]
+	},
+	{
+		"_id": "person$kkanagboh",
+		"handle": "kkanagboh",
+		"fullName": "Keili Kanagboh",
+		"age": 70,
+        "follows": ["person$apaul", "person$ekoroma", "person$jagaowa"],
+        "posts": [
+            "post$kkanagboh1"
+        ]
+	},
+	{
+		"_id": "post$jsuleman1",
+		"message": "Johson Suleman post 1",
+		"person": "person$jsuleman",
+        "comments": ["comment$ekoroma", "comment$jagaowa"],
+        "likes": 7
+	},
+	{
+        "_id": "post$ekoroma1",
+        "message": "Ernest Koroma post 1",
+        "person": "person$ekoroma",
+        "comments": [
+            "comment$apaul",
+            "comment$jagaowa"
+        ],
+        "likes": 8
+    },
+	{
+        "_id": "post$apaul1",
+        "message": "Achie Paul post 1",
+        "person": "person$apaul",
+        "comments": [
+            "comment$jsuleman1",
+            "comment$kkanagboh"
+        ],
+        "likes": 12
+    },
+    {
+        "_id": "post$jagaowa1",
+        "message": "Julius Agaowa post 1",
+        "person": "person$jagaowa",
+        "comments": [
+            "comment$ekoroma",
+            "comment$apaul"
+        ],
+        "likes": 5
+    },
+    {
+        "_id": "post$kkanagboh1",
+        "message": "Keili Kanagboh post 1",
+        "person": "person$kkanagboh",
+        "comments": [
+            "comment$ekoroma",
+            "comment$apaul"
+        ],
+        "likes": 16
+    },
+	{
+		"_id": "comment$jsuleman1",
+		"message": "Johnson Suleman here 1!",
+		"person": "person$jsuleman"
+	},
+	{
+		"_id": "comment$jsuleman2",
+		"message": "Johnson Suleman here 2!",
+		"person": "person$jsuleman"
+	},
+	{
+		"_id": "comment$jagaowa",
+		"message": "Julius Agaowa here!",
+		"person": "person$jagaowa"
+	},
+	{
+		"_id": "comment$apaul",
+		"message": "Achie Paul here!",
+		"person": "person$apaul"
+	},
+	{
+		"_id": "comment$kkanagboh",
+		"message": "Keili Kanagboh here!",
+		"person": "person$kkanagboh"
+	},
+	{
+		"_id": "comment$ekoroma",
+		"message": "Ernest Koroma here!",
+		"person": "person$ekoroma"
+	}
+]
