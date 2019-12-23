@@ -4,7 +4,7 @@ export default class Order {
 		this.lotType = order["order/lotType"];
 		this.buyer = buyer;
 		this.dateOrdered = order["order/dateOrdered"];
-		this.productRef = new Product(order.productRef);
+
 		this.quantity = order["order/quantity"];
 	}
 }

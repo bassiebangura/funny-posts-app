@@ -1,4 +1,4 @@
-export default class Operator {
+export default class Person {
 	constructor(data = {}) {
 		this.id = data["_id"];
 		this.name = data["operator/name"];

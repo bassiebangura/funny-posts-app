@@ -1,24 +1,8 @@
 import fetch from "isomorphic-fetch";
+//import { serverURL } from "./appConfig";
 
-function gateway(ip) {
-	let hosted = process.env.REACT_APP_ENVIRONMENT === "hosted";
-	let production = process.env.NODE_ENV === "production";
-
-	if (hosted && production) {
-		return "https://db.flur.ee";
-	} else if (hosted) {
-		return "http://localhost:8081";
-	} else if (!hosted) {
-		return ip;
-	}
-}
-
-function getTokenClaims(token) {
-	try {
-		return JSON.parse(atob(token.split(".")[1]));
-	} catch (e) {
-		return {};
-	}
+function isDevelopment() {
+	return process.env.NODE_ENV === "development";
 }
 
 function parseJSON(response) {
@@ -27,106 +11,93 @@ function parseJSON(response) {
 		if (response.status < 300) {
 			return newResponse;
 		} else {
-			throw newResponse;
+			throw newResponse.json;
 		}
 	});
 }
 
-function fullEndpoint(endpoint, network, db, body, ip) {
-	const hosted = process.env.REACT_APP_ENVIRONMENT === "hosted";
-	const endpointInfix = hosted ? "api" : "fdb";
+// function newToken() {
+// 	return fetch(`${serverURL}get-fluree-token`, { method: "GET" })
+// 		.then(parseJSON)
+// 		.then(res => {
+// 			let token = res.json.token;
+// 			localStorage.setItem("trustClarityToken", token);
+// 			// debugger;
+// 			return token;
+// 		})
+// 		.catch(err => {
+// 			// debugger;
+// 			let errorMessage = (err.json && err.json.message) || err;
+// 			throw new Error(errorMessage);
+// 		});
+// }
 
-	const locatedEndpoint = [
-		"query",
-		"multi-query",
-		"block",
-		"history",
-		"transact",
-		"graphql",
-		"sparql",
-		"command",
-		"snapshot"
-	].includes(endpoint);
+// function getToken() {
+// 	return new Promise(function(resolve, reject) {
+// 		let token = localStorage.getItem("trustClarityToken");
+// 		if (!token) {
+// 			// debugger;
+// 			resolve(newToken());
+// 		} else {
+// 			resolve(token);
+// 		}
+// 	});
+// }
 
-	const startURI = gateway(ip);
-
-	if (locatedEndpoint) {
-		if (endpoint === "snapshot") {
-			return `${startURI}/${endpointInfix}/${body["db/id"]}/${endpoint}`;
-		} else {
-			return `${startURI}/${endpointInfix}/${
-				hosted ? "db/" : ""
-			}${network}/${db}/${endpoint}`;
-		}
-	}
-
-	const prefixedEndpoints = [
-		"dbs",
-		"action",
-		"new-db",
-		"accounts",
-		"signin",
-		"health",
-		"sub",
-		"new-pw",
-		"reset-pw",
-		"activate-account",
-		"delete-db"
-	].includes(endpoint);
-
-	if (prefixedEndpoints) {
-		return `${startURI}/${endpointInfix}/${endpoint}`;
-	}
-
-	if (endpoint === "logs") {
-		return `${startURI}/${endpointInfix}/fdb/${endpoint}/${network}`;
-	}
-
-	throw {
-		status: 400,
-		message: "Invalid endpoint"
-	};
+function fetchResp(fullUri, fetchOpts, isDev) {
+	return fetch(fullUri, fetchOpts)
+		.then(parseJSON)
+		.then(resp => resp.json)
+		.catch(err => {
+			let errorMessage =
+				err.message || (err.json && err.json.message) || err.json || err;
+			throw new Error(errorMessage);
+		});
 }
 
-const flureeFetch = opts => {
-	// Opts include: ip, body, auth, network, db, endpoint
-	const { ip, body, auth, network, db, endpoint, headers, noRedirect } = opts;
+var flureeFetch = (uri, body) => {
+	const isDev = isDevelopment();
+	const gateway = isDev
+		? "http://localhost:8080/fdb"
+		: "https://db.flur.ee/api/db";
+	const db = isDev ? "/test/post-appv3" : "/tcdemo/test";
+	let fullUri;
+	if (uri === "/new-db") {
+		fullUri = gateway + uri;
+	} else if (!isDev && uri === "/dbs") {
+		fullUri = gateway + "s";
+	} else if (isDev && uri === "/dbs") {
+		fullUri = gateway + "/dbs";
+	} else {
+		fullUri = gateway + db + uri;
+	}
 
-	const fullUri = fullEndpoint(endpoint, network, db, body, ip);
-
-	const finalHeaders = headers
-		? headers
-		: {
-				"Content-Type": "application/json",
-				"Request-Timeout": 20000,
-				Authorization: `Bearer ${auth}`
-		  };
-
-	const fetchOpts = {
+	var fetchOpts = {
 		method: "POST",
-		headers: finalHeaders,
+		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(body)
 	};
 
-	return fetch(fullUri, fetchOpts)
-		.then(parseJSON)
-		.catch(error => {
-			if (!noRedirect && (error.status === 401 || error.status === 403)) {
-				localStorage.removeItem("token");
-				// main token expired, need to log back in.
-				if (this.props) {
-					this.props.logout();
-				} else {
-					window.location = "/";
-				}
-			} else {
-				if (error.json) {
-					return error.json;
-				}
-
-				return error;
-			}
-		});
+	return new Promise((resolve, reject) => {
+		if (!isDev) {
+			console.log("devmode")
+				.then(res => (fetchOpts.headers["Authorization"] = `Bearer ${res}`))
+				.then(res => fetchResp(fullUri, fetchOpts))
+				.then(res => {
+					console.log(res);
+					if (Object.keys(res).includes("result")) {
+						return resolve(res.result);
+					} else {
+						return resolve(res);
+					}
+				})
+				.catch(err => reject(err));
+		} else {
+			fetchResp(fullUri, fetchOpts)
+				.then(res => resolve(res))
+				.catch(err => reject(err));
+		}
+	});
 };
 
 export { flureeFetch, parseJSON };
