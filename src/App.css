@@ -1,4 +1,64 @@
 .App {
   text-align: center;
 }
+/* * {
+  border: 1px solid red;
+} */
+.users-and-posts-wrapper {
+  padding-top: 20px;
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+}
 
+.users-container {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  border: 1px solid #555;
+  border-radius: 5px;
+  padding: 5px;
+  margin-bottom: auto;
+}
+
+.users-button {
+  border-radius: 32px;
+  margin: 5px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.posts-container,
+.posts-and-comments-container {
+  border: 1px solid #444;
+}
+
+.posts-comments {
+  max-width: 95%;
+  margin: auto;
+  
+}
+
+.comments-header {
+  text-align: left;
+  margin-bottom: 0;
+  font-size: 0.68em;
+}
+.comment-message {
+  border-radius: 5px;
+  padding: 5px;
+  text-align: left;
+  border: 1px solid #444;
+  background-color: #eee;
+  font-size: 0.8em;
+  font-style: italic;
+}
+.posts-container {
+  margin: 24px;
+  border-radius: 10px;
+}
+.posts-and-comments-container {
+  padding: 15px;
+  border-radius: 10px;
+  width: 60%;
+}
