@@ -60,7 +60,7 @@ var flureeFetch = (uri, body) => {
 	const gateway = isDev
 		? "http://localhost:8080/fdb"
 		: "https://db.flur.ee/api/db";
-	const db = isDev ? "/test/post-appv3" : "/tcdemo/test";
+	const db = isDev ? "/test/post-appv4" : "/tcdemo/test";
 	let fullUri;
 	if (uri === "/new-db") {
 		fullUri = gateway + uri;
@@ -80,7 +80,8 @@ var flureeFetch = (uri, body) => {
 
 	return new Promise((resolve, reject) => {
 		if (!isDev) {
-			console.log("devmode")
+			console
+				.log("devmode")
 				.then(res => (fetchOpts.headers["Authorization"] = `Bearer ${res}`))
 				.then(res => fetchResp(fullUri, fetchOpts))
 				.then(res => {
