@@ -36,13 +36,25 @@
 	padding-bottom: 8px;
 }
 
+
+
+
+
+.timeline-wrapper {
+	padding: 15px;
+	border-radius: 10px;
+  width: 60%;
+  max-width: 460px;
+	border: 1px solid #444;
+}
 .posts-container {
 	border: 1px solid #444;
   display: flex;
   flex-direction: column;
   justify-content: center;
   margin-bottom: 24px;
-  padding: 5px;
+  padding: 5px 15px 5px 15px;
+ 
 }
 
 .comments-icon {
@@ -73,33 +85,20 @@
 	font-size: 0.68em;
 	display: flex;
 }
+
 .comment-message {
-	border-radius: 5px;
-	padding: 5px;
-	border: 1px solid #444;
-	background-color: #eee;
+  text-align: left;
 	font-size: 0.8em;
-	font-style: italic;
+  font-style: italic;
+  padding: 4px;
+  width: max-content;
 }
 
-/* Right triangle placed top left flush. */
-.tri-right.border.left-top:before {
-	content: ' ';
-	position: absolute;
-	width: 0;
-	height: 0;
-  left: -40px;
-	right: auto;
-  top: -8px;
-	bottom: auto;
-	border: 32px solid;
-	border-color: #666 transparent transparent transparent;
-}
 
 /****** Speech Bubble  ********/
 .speech-bubble {
 	position: relative;
-	background: #00aabb;
+	background: #63adba;
 	border-radius: .4em;
 }
 
@@ -110,18 +109,12 @@
 	top: 50%;
 	width: 0;
 	height: 0;
-	border: 32px solid transparent;
-	border-right-color: #00aabb;
+	border: 6px solid transparent;
+	border-right-color: #63adba;
 	border-left: 0;
 	border-top: 0;
-	margin-top: -16px;
-	margin-left: -32px;
+	margin-top: -3px;
+	margin-left: -6px;
 }
 
 
-.timeline-wrapper {
-	padding: 15px;
-	border-radius: 10px;
-	width: 60%;
-	border: 1px solid #444;
-}

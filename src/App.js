@@ -171,7 +171,7 @@ function App() {
 							<div className="posts-comments">
 								{item.totalComments
 									? item.comments.map(item => (
-											<p className="speech-bubble">{item}</p>
+											<p className="comment-message speech-bubble">{item}</p>
 									  ))
 									: ""}
 							</div>
