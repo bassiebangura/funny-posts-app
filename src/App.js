@@ -18,7 +18,6 @@ function App() {
 		}));
 
 	const refreshPosts = id => {
-		console.log(id);
 		const query = {
 			select: [
 				{
@@ -71,21 +70,24 @@ function App() {
 					throw new Error("Error fetching posts.");
 				}
 				const { follows, posts } = res;
-
 				const individualPostsAndComments = posts.map(item => ({
 					message: item.message,
-					comments: generateArrayOfCommentsMessage(item.comments),
+					comments: item.comments ? generateArrayOfCommentsMessage(item.comments) : [],
 					likes: item.likes,
-					totalComments: generateArrayOfCommentsMessage(item.comments).length
+					totalComments: item.comments ? generateArrayOfCommentsMessage(item.comments).length : 0
 				}));
 
-				const followsPosts = follows.map(item => item.posts);
-				const followsPostsAndComments = followsPosts.map(item => ({
-					message: item[0].message,
-					comments: generateArrayOfCommentsMessage(item[0].comments),
-					likes: item[0].likes,
-					totalComments: generateArrayOfCommentsMessage(item[0].comments).length
-				}));
+        const followsPostsNested = follows.map(item => item.posts);
+        const followsPosts = followsPostsNested.flat()
+        console.log(followsPosts)
+        const followsPostsAndComments = followsPosts.map(item =>  
+          ({
+					message: item.message,
+					comments:  item.comments ? generateArrayOfCommentsMessage(item.comments) : [],
+					likes: item.likes,
+					totalComments: item.comments ? generateArrayOfCommentsMessage(item.comments).length : 0
+        })
+        );
 
 				updatePosts({
 					individualPostsAndComments,
@@ -148,13 +150,13 @@ function App() {
 							<div className="posts-comments">
 								<p className="comments-header">
 									<span onClick={handleHideAndShow}>Comments</span>
-									<span> {item.totalComments}</span>
+									<span>{item.totalComments}</span>
 									<span> Likes</span>
 									<span> {item.likes}</span>
 								</p>
-								{item.comments.map(item => (
+								{item.totalComments ? item.comments.map(item => (
 									<p className="comment-message">{item}</p>
-								))}
+								)) : ""}
 							</div>
 						</div>
 					))}
