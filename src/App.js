@@ -14,7 +14,7 @@ function App() {
 			postsAndComments
 		}));
 
-	const refreshPosts = id => {
+	const refreshPosts = (id = 351843720888322) => {
 		const query = {
 			select: [
 				{
