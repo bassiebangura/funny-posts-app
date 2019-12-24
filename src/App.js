@@ -5,8 +5,9 @@ import "./App.css";
 
 function App() {
 	const [posts, setPosts] = useState({
-		postsAndComments: []
-	});
+    postsAndComments: []
+  });
+   const [showText, setShowText] = useState(false);
 	const updatePosts = ({ postsAndComments }) =>
 		setPosts(prevState => ({
 			...prevState,
@@ -112,7 +113,7 @@ function App() {
 	};
 
 	const handleHideAndShow = () => {
-		console.log("You clicked hide or show");
+		console.log("hello")
 	};
 	const [users, setUsers] = useState([]);
 
@@ -153,7 +154,7 @@ function App() {
 								<p className="post-message left-align">{item.message}</p>
 								<div className="comments-likes-wrapper left-align">
 									<div className="comments-icon-total-comments-wrapper">
-										<span className="comments-icon" onClick={handleHideAndShow}>
+										<span className="comments-icon" >
 											<FaRegComments />
 										</span>
 										<span className="total-comments">{item.totalComments}</span>
@@ -167,14 +168,17 @@ function App() {
 									</div>
 								</div>
 							</div>
-
-							<div className="posts-comments">
-								{item.totalComments
-									? item.comments.map(item => (
-											<p className="comment-message speech-bubble">{item}</p>
-									  ))
-									: ""}
-							</div>
+							{ true ? 
+								<div className="posts-comments">
+									{item.totalComments
+										? item.comments.map(item => (
+												<p className="comment-message speech-bubble">{item}</p>
+										  ))
+										: ""}
+								</div>
+                :
+                " "
+							}
 						</div>
 					))}
 				</div>
