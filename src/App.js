@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { flureeFetch } from "./flureeFetch";
+import { FaRegComments, FaRegThumbsUp } from "react-icons/fa";
 import "./App.css";
 
 function App() {
 	const [posts, setPosts] = useState({
-		individualPostsAndComments: [],
-		followsPostsAndComments: []
+		postsAndComments: []
 	});
-	const updatePosts = ({
-		individualPostsAndComments,
-		followsPostsAndComments
-	}) =>
+	const updatePosts = ({ postsAndComments }) =>
 		setPosts(prevState => ({
 			...prevState,
-			individualPostsAndComments,
-			followsPostsAndComments
+			postsAndComments
 		}));
 
 	const refreshPosts = id => {
@@ -72,26 +68,33 @@ function App() {
 				const { follows, posts } = res;
 				const individualPostsAndComments = posts.map(item => ({
 					message: item.message,
-					comments: item.comments ? generateArrayOfCommentsMessage(item.comments) : [],
+					comments: item.comments
+						? generateArrayOfCommentsMessage(item.comments)
+						: [],
 					likes: item.likes,
-					totalComments: item.comments ? generateArrayOfCommentsMessage(item.comments).length : 0
+					totalComments: item.comments
+						? generateArrayOfCommentsMessage(item.comments).length
+						: 0
 				}));
 
-        const followsPostsNested = follows.map(item => item.posts);
-        const followsPosts = followsPostsNested.flat()
-        console.log(followsPosts)
-        const followsPostsAndComments = followsPosts.map(item =>  
-          ({
+				const followsPostsNested = follows.map(item => item.posts);
+				const followsPosts = followsPostsNested.flat();
+				const followsPostsAndComments = followsPosts.map(item => ({
 					message: item.message,
-					comments:  item.comments ? generateArrayOfCommentsMessage(item.comments) : [],
+					comments: item.comments
+						? generateArrayOfCommentsMessage(item.comments)
+						: [],
 					likes: item.likes,
-					totalComments: item.comments ? generateArrayOfCommentsMessage(item.comments).length : 0
-        })
-        );
-
+					totalComments: item.comments
+						? generateArrayOfCommentsMessage(item.comments).length
+						: 0
+				}));
+				const postsAndComments = [
+					...individualPostsAndComments,
+					...followsPostsAndComments
+				];
 				updatePosts({
-					individualPostsAndComments,
-					followsPostsAndComments
+					postsAndComments
 				});
 				//console.log(followsPostsAndComments);
 			})
@@ -143,37 +146,34 @@ function App() {
 				<h1>Funny Post App</h1>
 			</header>
 			<div className="users-and-posts-wrapper">
-				<div className="posts-and-comments-container">
-					{posts.individualPostsAndComments.map(item => (
+				<div className="timeline-wrapper">
+					{posts.postsAndComments.map(item => (
 						<div className="posts-container">
-							<p>{item.message}</p>
-							<div className="posts-comments">
-								<p className="comments-header">
-									<span onClick={handleHideAndShow}>Comments</span>
-									<span>{item.totalComments}</span>
-									<span> Likes</span>
-									<span> {item.likes}</span>
-								</p>
-								{item.totalComments ? item.comments.map(item => (
-									<p className="comment-message">{item}</p>
-								)) : ""}
+							<div className="post-message-comments-likes-icon-container">
+								<p className="post-message left-align">{item.message}</p>
+								<div className="comments-likes-wrapper left-align">
+									<div className="comments-icon-total-comments-wrapper">
+										<span className="comments-icon" onClick={handleHideAndShow}>
+											<FaRegComments />
+										</span>
+										<span className="total-comments">{item.totalComments}</span>
+									</div>
+									<div className="likes-icon-total-likes-wrapper">
+										<span className="likes-icon">
+											{" "}
+											<FaRegThumbsUp />
+										</span>
+										<span className="total-likes"> {item.likes}</span>
+									</div>
+								</div>
 							</div>
-						</div>
-					))}
 
-					{posts.followsPostsAndComments.map(item => (
-						<div className="posts-container">
-							<p>{item.message}</p>
 							<div className="posts-comments">
-								<p className="comments-header">
-									<span onClick={handleHideAndShow}>Comments</span>
-									<span> {item.totalComments}</span>
-									<span> Likes</span>
-									<span> {item.likes}</span>
-								</p>
-								{item.comments.map(item => (
-									<p className="comment-message">{item}</p>
-								))}
+								{item.totalComments
+									? item.comments.map(item => (
+											<p className="comment-message left-align">{item}</p>
+									  ))
+									: ""}
 							</div>
 						</div>
 					))}

@@ -1,9 +1,24 @@
 .App {
   text-align: center;
 }
-/* * {
+/* {
   border: 1px solid red;
-} */
+/* } 
+
+
+/******** Utilities  ********/
+.left-align {
+  text-align: left;
+}
+
+
+
+
+
+
+
+
+/******    APP  *******/
 .users-and-posts-wrapper {
   padding-top: 20px;
   display: flex;
@@ -28,37 +43,52 @@
   padding-bottom: 8px;
 }
 
-.posts-container,
-.posts-and-comments-container {
+.posts-container {
   border: 1px solid #444;
+   margin: 24px;
 }
 
+.post-message-comments-likes-icon-container {
+  max-width: 95%;
+}
+.comments-icon{
+  margin-right: 0.45em;
+}
+.likes-icon {
+  margin-right: 0.15em;
+}
+.post-message {
+  text-align: left;
+}
 .posts-comments {
   max-width: 95%;
   margin: auto;
   
 }
+.likes-icon-total-likes-wrapper {
+  padding: 0 0 0 10px;
+}
+.comments-icon-total-comments-wrapper {
+  padding: 0 10px 0 0;
+}
 
-.comments-header {
-  text-align: left;
+.comments-likes-wrapper {
   margin-bottom: 0;
   font-size: 0.68em;
+  display: flex;
 }
 .comment-message {
   border-radius: 5px;
   padding: 5px;
-  text-align: left;
   border: 1px solid #444;
   background-color: #eee;
   font-size: 0.8em;
   font-style: italic;
 }
-.posts-container {
-  margin: 24px;
-  border-radius: 10px;
-}
-.posts-and-comments-container {
+
+.timeline-wrapper {
   padding: 15px;
   border-radius: 10px;
   width: 60%;
+  border: 1px solid #444;
 }
