@@ -6,7 +6,7 @@ import "./App.css";
 function App() {
 	const [posts, setPosts] = useState({
 		postsAndComments: [],
-		currentUserId: null
+    currentUserId: null
 	});
 
 
@@ -17,7 +17,7 @@ function App() {
 			currentUserId
 		}));
 
-	const refreshPosts = (id) => {
+	const refreshPosts = async (id) => {
 		const query = {
 			select: [
 				{
@@ -63,60 +63,58 @@ function App() {
 			});
 			return mapping;
 		};
-		return flureeFetch("/query", query)
-			.then(res => {
-				//console.log(res)
-				if (!res) {
-					throw new Error("Error fetching posts.");
-        }
-        console.log(res)
-				const { follows, posts } = res;
-				const individualPostsAndComments = posts.map(item => ({
-          id: item._id,
-					message: item.message,
-					comments: item.comments
-						? generateArrayOfCommentsMessage(item.comments)
-						: [],
-					likes: item.likes,
-					totalComments: item.comments
-						? generateArrayOfCommentsMessage(item.comments).length
-						: 0
-				}));
-
-				const followsPostsNested = follows.map(item => item.posts);
-				const followsPosts = followsPostsNested.flat();
-				const followsPostsAndComments = followsPosts.map(item => ({
-					message: item.message,
-					comments: item.comments
-						? generateArrayOfCommentsMessage(item.comments)
-						: [],
-					likes: item.likes,
-					totalComments: item.comments
-						? generateArrayOfCommentsMessage(item.comments).length
-						: 0
-				}));
-				const postsAndComments = [
-					...individualPostsAndComments,
-					...followsPostsAndComments
-				];
-
-				const currentUserId = id;
-				updatePosts({
-					postsAndComments,
-					currentUserId
-				});
-			})
-			.catch(err => {
-				console.log(err);
-				// debugger;
-			});
+		try {
+      let res = await flureeFetch("/query", query);
+      //console.log(res)
+      if (!res) {
+        throw new Error("Error fetching posts.");
+      }
+      //console.log(res);
+      const { follows, posts } = res;
+      const individualPostsAndComments = posts.map(item => ({
+        id: item._id,
+        message: item.message,
+        comments: item.comments
+          ? generateArrayOfCommentsMessage(item.comments)
+          : [],
+        likes: item.likes,
+        totalComments: item.comments
+          ? generateArrayOfCommentsMessage(item.comments).length
+          : 0
+      }));
+      const followsPostsNested = follows.map(item => item.posts);
+      const followsPosts = followsPostsNested.flat();
+      const followsPostsAndComments = followsPosts.map(item => ({
+        message: item.message,
+        comments: item.comments
+          ? generateArrayOfCommentsMessage(item.comments)
+          : [],
+        likes: item.likes,
+        totalComments: item.comments
+          ? generateArrayOfCommentsMessage(item.comments).length
+          : 0
+      }));
+      const postsAndComments = [
+        ...individualPostsAndComments,
+        ...followsPostsAndComments
+      ];
+      const currentUserId = id;
+      updatePosts({
+        postsAndComments,
+        currentUserId
+      });
+    }
+    catch (err) {
+      console.log(err);
+    }
 	};
-	useEffect(() => {
-		refreshPosts();
-	}, [setPosts]);
+	// useEffect(() => {
+	// 	refreshPosts();
+	// }, [setPosts]);
 
 	const handleSubmit = e => {
-		refreshPosts(e.target.id);
+    refreshPosts(e.target.id);
+    getUsers(e.target.id)
 	};
 
 	// const handleHideAndShow = () => {
@@ -124,30 +122,29 @@ function App() {
 	// };
 	const [users, setUsers] = useState([]);
 
-	const getUsers = (id) => {
+	const getUsers = async (id) => {
 		const query = {
 			select: ["_id", "fullName", "handle"],
 			from: "person"
 		};
 
-		return flureeFetch("/query", query)
-			.then(res => {
-				if (!res) {
-					throw new Error("Error fetching posts.");
-				}
-				const fullNamesAndId = res.map(item => item);
-				setUsers(fullNamesAndId);
-			})
-			.catch(err => {
-				console.log(err);
-				//debugger;
-			});
+		try {
+      const res = await flureeFetch("/query", query);
+      if (!res) {
+        throw new Error("Error fetching posts.");
+      }
+      const fullNamesAndId = res.map(item => ({ ...item, isDisabled: parseInt(id) === parseInt(item._id) ? true : false }));
+      setUsers(fullNamesAndId);
+    }
+    catch (err) {
+      console.log(err);
+    }
 	};
 	useEffect(() => {
 		getUsers();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [setUsers]);
-	console.log(posts);
+	
 	return (
 		<div className="App">
 			<header className="App-header">
@@ -198,7 +195,7 @@ function App() {
 								id={item._id}
                 key={item._id}
                 className="users-button"
-              
+                disabled={item.isDisabled}
 							>
 								{item.fullName}
 							</button>
