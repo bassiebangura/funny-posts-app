@@ -5,16 +5,19 @@ import "./App.css";
 
 function App() {
 	const [posts, setPosts] = useState({
-    postsAndComments: []
-  });
-   const [showText, setShowText] = useState(false);
-	const updatePosts = ({ postsAndComments }) =>
+		postsAndComments: [],
+		currentUserId: null
+	});
+
+
+	const updatePosts = ({ postsAndComments, currentUserId }) =>
 		setPosts(prevState => ({
 			...prevState,
-			postsAndComments
+			postsAndComments,
+			currentUserId
 		}));
 
-	const refreshPosts = (id = 351843720888322) => {
+	const refreshPosts = (id) => {
 		const query = {
 			select: [
 				{
@@ -65,9 +68,11 @@ function App() {
 				//console.log(res)
 				if (!res) {
 					throw new Error("Error fetching posts.");
-				}
+        }
+        console.log(res)
 				const { follows, posts } = res;
 				const individualPostsAndComments = posts.map(item => ({
+          id: item._id,
 					message: item.message,
 					comments: item.comments
 						? generateArrayOfCommentsMessage(item.comments)
@@ -94,10 +99,12 @@ function App() {
 					...individualPostsAndComments,
 					...followsPostsAndComments
 				];
+
+				const currentUserId = id;
 				updatePosts({
-					postsAndComments
+					postsAndComments,
+					currentUserId
 				});
-				//console.log(followsPostsAndComments);
 			})
 			.catch(err => {
 				console.log(err);
@@ -112,14 +119,14 @@ function App() {
 		refreshPosts(e.target.id);
 	};
 
-	const handleHideAndShow = () => {
-		console.log("hello")
-	};
+	// const handleHideAndShow = () => {
+	// 	console.log("hello")
+	// };
 	const [users, setUsers] = useState([]);
 
-	const getUsers = () => {
+	const getUsers = (id) => {
 		const query = {
-			select: ["fullName", "handle"],
+			select: ["_id", "fullName", "handle"],
 			from: "person"
 		};
 
@@ -140,7 +147,7 @@ function App() {
 		getUsers();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [setUsers]);
-
+	console.log(posts);
 	return (
 		<div className="App">
 			<header className="App-header">
@@ -154,7 +161,7 @@ function App() {
 								<p className="post-message left-align">{item.message}</p>
 								<div className="comments-likes-wrapper left-align">
 									<div className="comments-icon-total-comments-wrapper">
-										<span className="comments-icon" >
+										<span className="comments-icon">
 											<FaRegComments />
 										</span>
 										<span className="total-comments">{item.totalComments}</span>
@@ -168,17 +175,17 @@ function App() {
 									</div>
 								</div>
 							</div>
-							{ true ? 
-								<div className="posts-comments">
+							{true ? (
+								<div className="post-comments">
 									{item.totalComments
 										? item.comments.map(item => (
 												<p className="comment-message speech-bubble">{item}</p>
 										  ))
 										: ""}
 								</div>
-                :
-                " "
-							}
+							) : (
+								" "
+							)}
 						</div>
 					))}
 				</div>
@@ -189,8 +196,9 @@ function App() {
 							<button
 								onClick={handleSubmit}
 								id={item._id}
-								key={item._id}
-								className="users-button"
+                key={item._id}
+                className="users-button"
+              
 							>
 								{item.fullName}
 							</button>
