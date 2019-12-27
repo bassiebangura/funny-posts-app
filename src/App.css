@@ -55,18 +55,40 @@
  
 }
 
+
 .comments-icon {
 	margin-right: 0.45em;
 }
 .likes-icon {
-	margin-right: 0.15em;
+  margin-right: 0.15em;
 }
 
+.likes-icon-svg{
+  cursor: pointer;
+}
+
+/******* post section ******/
 .post-message {
   text-align: left;
   padding-left: 8px;
 }
+.addNewPost {
+  border-radius: 4px;
+  resize: none;
+  width: 100%;
+}
 
+.addNewPostForm {
+  text-align: left;
+}
+
+.addNewPostButton {
+  border-radius: 4px;
+}
+
+.add-new-post-textarea-and-post-button-wrapper {
+  margin-bottom: 20px;
+}
 .post-message-comments-likes-icon-container
  {
 	max-width: 100%;
@@ -88,8 +110,13 @@
   padding: 6px 0px 6px 10px;
 
 }
+
+/******** comments section ********/
 .post-comments {
-  padding-left: 10px
+  padding-left: 10px;
+  text-align: left;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 .comment-message {
   text-align: left;
@@ -97,6 +124,11 @@
   font-style: italic;
   padding: 4px;
   width: max-content;
+}
+
+.addComment {
+  resize: none;
+  border-radius: .4em;
 }
 
 

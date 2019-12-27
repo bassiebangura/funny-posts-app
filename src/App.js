@@ -6,18 +6,20 @@ import "./App.css";
 function App() {
 	const [posts, setPosts] = useState({
 		postsAndComments: [],
-    currentUserId: null
+    currentUserId: null,
+    showAddNewPost: false
 	});
 
-
-	const updatePosts = ({ postsAndComments, currentUserId }) =>
+	const updatePosts = ({ postsAndComments, currentUserId, showAddNewPost, newPost }) =>
 		setPosts(prevState => ({
 			...prevState,
 			postsAndComments,
-			currentUserId
+      currentUserId,
+      showAddNewPost,
+      newPost
 		}));
 
-	const refreshPosts = async (id) => {
+	const refreshPosts = async id => {
 		const query = {
 			select: [
 				{
@@ -64,87 +66,187 @@ function App() {
 			return mapping;
 		};
 		try {
-      let res = await flureeFetch("/query", query);
-      //console.log(res)
-      if (!res) {
-        throw new Error("Error fetching posts.");
-      }
-      //console.log(res);
-      const { follows, posts } = res;
-      const individualPostsAndComments = posts.map(item => ({
-        id: item._id,
-        message: item.message,
-        comments: item.comments
-          ? generateArrayOfCommentsMessage(item.comments)
-          : [],
-        likes: item.likes,
-        totalComments: item.comments
-          ? generateArrayOfCommentsMessage(item.comments).length
-          : 0
-      }));
-      const followsPostsNested = follows.map(item => item.posts);
-      const followsPosts = followsPostsNested.flat();
-      const followsPostsAndComments = followsPosts.map(item => ({
-        message: item.message,
-        comments: item.comments
-          ? generateArrayOfCommentsMessage(item.comments)
-          : [],
-        likes: item.likes,
-        totalComments: item.comments
-          ? generateArrayOfCommentsMessage(item.comments).length
-          : 0
-      }));
-      const postsAndComments = [
-        ...individualPostsAndComments,
-        ...followsPostsAndComments
-      ];
+			let res = await flureeFetch("/query", query);
+			//console.log(res)
+			if (!res) {
+				throw new Error("Error fetching posts.");
+			}
+			//console.log(res);
+			const { follows, posts } = res;
+			const individualPostsAndComments = posts.map(item => ({
+				postId: item._id,
+				message: item.message,
+				comments: item.comments
+					? generateArrayOfCommentsMessage(item.comments)
+					: [],
+				likes: item.likes,
+				totalComments: item.comments
+					? generateArrayOfCommentsMessage(item.comments).length
+					: 0
+			}));
+			const followsPostsNested = follows.map(item => item.posts);
+			const followsPosts = followsPostsNested.flat();
+			const followsPostsAndComments = followsPosts.map(item => ({
+				postId: item._id,
+				message: item.message,
+				comments: item.comments
+					? generateArrayOfCommentsMessage(item.comments)
+					: [],
+				likes: item.likes,
+				totalComments: item.comments
+					? generateArrayOfCommentsMessage(item.comments).length
+					: 0
+			}));
+			const postsAndComments = [
+				...individualPostsAndComments,
+				...followsPostsAndComments
+			];
       const currentUserId = id;
-      updatePosts({
-        postsAndComments,
-        currentUserId
-      });
-    }
-    catch (err) {
-      console.log(err);
-    }
+      const showAddNewPost = true;
+			updatePosts({
+				postsAndComments,
+        currentUserId,
+        showAddNewPost
+			});
+		} catch (err) {
+			console.log(err);
+		}
 	};
 	// useEffect(() => {
 	// 	refreshPosts();
 	// }, [setPosts]);
 
 	const handleSubmit = e => {
-    refreshPosts(e.target.id);
-    getUsers(e.target.id)
+		//console.log(e);
+		refreshPosts(e.target.id);
+		getUsers(e.target.id);
 	};
 
-	// const handleHideAndShow = () => {
-	// 	console.log("hello")
-	// };
+	const addLikes = async e => {
+
+		e.preventDefault();
+		// console.log(e);
+		// console.log(e.target);
+
+		const postId = parseInt(e.target.id);
+		if (postId) {
+     let currentLikes =  posts.postsAndComments.filter(item => item.postId === postId)[0].likes
+     
+			const transaction = [
+				{
+					_id: postId,
+					likes: (currentLikes + 1)
+				}
+			];
+			try {
+				const res = await flureeFetch("/transact", transaction);
+        // console.log(res);
+        refreshPosts(posts.currentUserId)
+				if (!res) {
+					throw new Error("Error transacting transaction.");
+				}
+			} catch (err) {
+				console.log(err);
+			}
+		}
+  };
+  
+ 
+
 	const [users, setUsers] = useState([]);
 
-	const getUsers = async (id) => {
+	const getUsers = async id => {
 		const query = {
 			select: ["_id", "fullName", "handle"],
 			from: "person"
 		};
 
 		try {
-      const res = await flureeFetch("/query", query);
-      if (!res) {
-        throw new Error("Error fetching posts.");
-      }
-      const fullNamesAndId = res.map(item => ({ ...item, isDisabled: parseInt(id) === parseInt(item._id) ? true : false }));
-      setUsers(fullNamesAndId);
-    }
-    catch (err) {
-      console.log(err);
-    }
+			const res = await flureeFetch("/query", query);
+			if (!res) {
+				throw new Error("Error fetching posts.");
+			}
+			const fullNamesAndId = res.map(item => ({
+				...item,
+				isDisabled: parseInt(id) === parseInt(item._id) ? true : false
+			})); //disable user with current posts showing.
+			setUsers(fullNamesAndId);
+		} catch (err) {
+			console.log(err);
+		}
 	};
 	useEffect(() => {
 		getUsers();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [setUsers]);
+  }, [setUsers]);
+
+
+  const [showButton, setShowButton] = useState({
+		displayButton: false,
+		isDisabledPostButton: true
+	});
+  const handldeOnFocus = () => {
+    setShowButton({
+      displayButton: true,
+      isDisabledPostButton: true
+    })
+    setNewPost(
+      {
+        newPostValue: ""
+      }
+    )
+  }
+
+  const [newPost, setNewPost] = useState({
+    newPostValue: "Leave a funny post..",
+    
+  })
+  const handleNewPostOnChange = e => {
+    setNewPost(
+      {
+        newPostValue: e.target.value
+      }
+    )
+
+    setShowButton(
+      {
+        displayButton: true,
+        isDisabledPostButton: e.target.value ? false : true
+      }
+    )
+  }
+
+  const handlePostSubmit = async (e) => {
+    e.preventDefault();
+    let newPostMessage = newPost.newPostValue
+    const transaction = [
+			{
+				"_id": "post$1",
+				"post/message": newPostMessage,
+				"post/person": parseInt(posts.currentUserId),
+				"post/likes": 0,
+				"post/comments": []
+			},
+			{
+				"_id": parseInt(posts.currentUserId),
+				"person/posts": ["post$1"]
+			}
+    ];
+  
+      	try {
+					const res = await flureeFetch("/transact", transaction);
+					console.log(res);
+					refreshPosts(posts.currentUserId);
+					if (!res) {
+						throw new Error("Error transacting transaction.");
+					}
+				} catch (err) {
+					console.log(err);
+				}
+    
+    
 	
+	};
 	return (
 		<div className="App">
 			<header className="App-header">
@@ -152,6 +254,32 @@ function App() {
 			</header>
 			<div className="users-and-posts-wrapper">
 				<div className="timeline-wrapper">
+					{posts.showAddNewPost ? (
+						<div className="add-new-post-textarea-and-post-button-wrapper">
+							<form className="addNewPostForm" onSubmit={handlePostSubmit}>
+								<textarea
+									className="addNewPost"
+									onFocus={() => handldeOnFocus()}
+									onChange={handleNewPostOnChange}
+									value={newPost.newPostValue}
+								></textarea>
+								{showButton.displayButton ? (
+									<button
+										disabled={showButton.isDisabledPostButton}
+										className="addNewPostButton"
+										type="submit"
+									>
+										Post
+									</button>
+								) : (
+									""
+								)}
+							</form>
+						</div>
+					) : (
+						" "
+					)}
+
 					{posts.postsAndComments.map(item => (
 						<div className="posts-container">
 							<div className="post-message-comments-likes-icon-container">
@@ -165,8 +293,11 @@ function App() {
 									</div>
 									<div className="likes-icon-total-likes-wrapper">
 										<span className="likes-icon">
-											{" "}
-											<FaRegThumbsUp />
+											<FaRegThumbsUp
+												id={item.postId}
+												onClick={addLikes}
+												className="likes-icon-svg"
+											/>
 										</span>
 										<span className="total-likes"> {item.likes}</span>
 									</div>
@@ -179,6 +310,10 @@ function App() {
 												<p className="comment-message speech-bubble">{item}</p>
 										  ))
 										: ""}
+									<textarea
+										className="addComment"
+										placeholder="Leave a comment..."
+									></textarea>
 								</div>
 							) : (
 								" "
@@ -193,9 +328,9 @@ function App() {
 							<button
 								onClick={handleSubmit}
 								id={item._id}
-                key={item._id}
-                className="users-button"
-                disabled={item.isDisabled}
+								key={item._id}
+								className="users-button"
+								disabled={item.isDisabled}
 							>
 								{item.fullName}
 							</button>
