@@ -260,64 +260,63 @@ function App() {
 		isDisabledCommentButton: true
 	});
 	const handleNewCommentOnFocus = () => {
-		setShowCommentButton({
-			displayCommentButton: true,
-			isDisabledCommentButton: true
-		});
-		setNewComment({
-			newCommentValue: ""
-		});
-		console.log(showCommentButton);
+		// setShowCommentButton({
+		// 	displayCommentButton: true,
+		// 	isDisabledCommentButton: true
+		// });
+		// setNewComment({
+		// 	newCommentValue: ""
+		// });
 	};
-	const [newComment, setNewComment] = useState({
-		newCommentValue: "Leave your comment here.."
-	});
+	// const [newComment, setNewComment] = useState({
+	// 	newCommentValue: "Leave your comment here.."
+	// });
 
-	const handleNewCommentOnChange = e => {
-		setNewComment({
-			newCommentValue: e.target.value
-		});
+	// const handleNewCommentOnChange = e => {
+	// 	setNewComment({
+	// 		newCommentValue: e.target.value
+	// 	});
 
-		setShowCommentButton({
-			displayCommentButton: true,
-			isDisabledCommentButton: e.target.value ? false : true
-		});
-	};
-	const handleCommentSubmit = async e => {
-		e.preventDefault();
-		let newCommentMessage = newComment.newCommentValue;
-		const transaction = [
-			{
-				_id: "post$1",
-				"post/message": newCommentMessage,
-				"post/person": parseInt(posts.currentUserId),
-				"post/likes": 0,
-				"post/comments": []
-			},
-			{
-				_id: parseInt(posts.currentUserId),
-				"person/posts": ["post$1"]
-			}
-		];
+	// 	setShowCommentButton({
+	// 		displayCommentButton: true,
+	// 		isDisabledCommentButton: e.target.value ? false : true
+	// 	});
+	// };
+	// const handleCommentSubmit = async e => {
+	// 	e.preventDefault();
+	// 	let newCommentMessage = newComment.newCommentValue;
+	// 	const transaction = [
+	// 		{
+	// 			_id: "post$1",
+	// 			"post/message": newCommentMessage,
+	// 			"post/person": parseInt(posts.currentUserId),
+	// 			"post/likes": 0,
+	// 			"post/comments": []
+	// 		},
+	// 		{
+	// 			_id: parseInt(posts.currentUserId),
+	// 			"person/posts": ["post$1"]
+	// 		}
+	// 	];
 
-		try {
-			const res = await flureeFetch("/transact", transaction);
-			//console.log(res);
-			refreshPosts(posts.currentUserId);
-			setNewComment({
-				newCommentValue: ""
-			});
-			// setShowPostButton({
-			// 	displayPostButton: true,
-			// 	isDisabledPostButton: true
-			// });
-			if (!res) {
-				throw new Error("Error transacting transaction.");
-			}
-		} catch (err) {
-			console.log(err);
-		}
-	};
+	// 	try {
+	// 		const res = await flureeFetch("/transact", transaction);
+	// 		//console.log(res);
+	// 		refreshPosts(posts.currentUserId);
+	// 		setNewComment({
+	// 			newCommentValue: ""
+	// 		});
+	// 		// setShowPostButton({
+	// 		// 	displayPostButton: true,
+	// 		// 	isDisabledPostButton: true
+	// 		// });
+	// 		if (!res) {
+	// 			throw new Error("Error transacting transaction.");
+	// 		}
+	// 	} catch (err) {
+	// 		console.log(err);
+	// 	}
+	// };
 
 	return (
 		<div className="App">
@@ -384,18 +383,18 @@ function App() {
 								<div className="add-new-comment-textarea-and-comment-button-wrapper">
 									<form
 										className="addCommentForm"
-										onSubmit={handleCommentSubmit}
+										// onSubmit={handleCommentSubmit}
 									>
 										<textarea
 											name={item.postId}
 											className="addNewPost"
 											onFocus={() => handleNewCommentOnFocus()}
-											onChange={handleNewCommentOnChange}
-											value={newComment.newCommentValue}
+											// onChange={handleNewCommentOnChange}
+											// value={newComment.newCommentValue}
 										></textarea>
 										{showCommentButton.displayCommentButton ? (
 											<button
-												disabled={showCommentButton.isDisabledCommentButton}
+												// disabled={showCommentButton.isDisabledCommentButton}
 												className="addNewPostButton"
 												type="submit"
 											>
