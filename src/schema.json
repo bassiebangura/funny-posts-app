@@ -113,17 +113,3 @@
 
 ]
 
-	//transaction to add post
-[
-    {
-    "_id": "post$1",
-    "post/message": "Transact post 1 by Julius",
-    "post/person": 351843720888324,
-    "post/likes": 0,
-    "post/comments": []
-    },
-    {
-        "_id": 351843720888324,
-        "person/posts": ["post$1"]
-    }
-]

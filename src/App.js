@@ -181,13 +181,13 @@ function App() {
   }, [setUsers]);
 
 
-  const [showButton, setShowButton] = useState({
+  const [showPostButton, setShowPostButton] = useState({
 		displayButton: false,
 		isDisabledPostButton: true
 	});
   const handldeOnFocus = () => {
-    setShowButton({
-      displayButton: true,
+    setShowPostButton({
+      displayPostButton: true,
       isDisabledPostButton: true
     })
     setNewPost(
@@ -208,9 +208,9 @@ function App() {
       }
     )
 
-    setShowButton(
+    setShowPostButton(
       {
-        displayButton: true,
+        displayPostButton: true,
         isDisabledPostButton: e.target.value ? false : true
       }
     )
@@ -235,8 +235,15 @@ function App() {
   
       	try {
 					const res = await flureeFetch("/transact", transaction);
-					console.log(res);
-					refreshPosts(posts.currentUserId);
+					//console.log(res);
+          refreshPosts(posts.currentUserId);
+          setNewPost({
+            newPostValue: ""
+          });
+          setShowPostButton({
+						displayPostButton: true,
+						isDisabledPostButton: true
+					});
 					if (!res) {
 						throw new Error("Error transacting transaction.");
 					}
@@ -263,9 +270,9 @@ function App() {
 									onChange={handleNewPostOnChange}
 									value={newPost.newPostValue}
 								></textarea>
-								{showButton.displayButton ? (
+								{showPostButton.displayPostButton ? (
 									<button
-										disabled={showButton.isDisabledPostButton}
+										disabled={showPostButton.isDisabledPostButton}
 										className="addNewPostButton"
 										type="submit"
 									>
