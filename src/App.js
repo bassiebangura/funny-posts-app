@@ -87,7 +87,11 @@ function App() {
 				likes: item.likes,
 				totalComments: item.comments
 					? generateArrayOfCommentsMessage(item.comments).length
-					: 0
+					: 0,
+				showComments: false,
+				showCommentButton: false,
+				isDisabledCommentButton: true,
+				newComment: ""
 			}));
 			const followsPostsNested = follows.map(item => item.posts);
 			const followsPosts = followsPostsNested.flat();
@@ -100,7 +104,11 @@ function App() {
 				likes: item.likes,
 				totalComments: item.comments
 					? generateArrayOfCommentsMessage(item.comments).length
-					: 0
+					: 0,
+				showComments: false,
+				showCommentButton: false,
+				isDisabledCommentButton: true,
+				newComment: ""
 			}));
 			const postsAndComments = [
 				...individualPostsAndComments,
@@ -255,68 +263,83 @@ function App() {
 	/***********************************************************
 	 ******************* Add Comment Section ********************
 	 ***********************************************************/
-	const [showCommentButton, setShowCommentButton] = useState({
-		displayCommentButton: false,
-		isDisabledCommentButton: true
-	});
-	const handleNewCommentOnFocus = () => {
+	// const [showCommentButton, setShowCommentButton] = useState({
+	// 	displayCommentButton: false,
+	// 	isDisabledCommentButton: true
+  // });
+  	// showCommentButton: true,
+		// 		isDisabledCommentButton: true,
+		// 		newComment: "Leave you comment...."
+	const handleNewCommentOnFocus = e => {
+    let commentPostId = parseInt(e.target.name);
+    let arrayOfPostsAndComments = posts.postsAndComments;//must refactor
+    let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
+      return {
+				...item,
+				isDisabledCommentButton: commentPostId === item.postId ? false : true,
+				showCommentButton: commentPostId === item.postId ? true : false
+			};
+    })
+    let postsAndComments = arrayOfPostsAndCommentsUpdated
+		setPosts(prevState => ({
+			...prevState,
+			postsAndComments
+		}));
+
+	};
+
+
+	const handleNewCommentOnChange = e => {
+    let commentPostId = parseInt(e.target.name);
+    let	newCommentValue= e.target.value;
+    let arrayOfPostsAndComments = posts.postsAndComments;//must refactor
+		let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
+			return {
+				...item,
+				newComment: commentPostId === item.postId ?  newCommentValue: item.newComment
+			};
+		});
+		let postsAndComments = arrayOfPostsAndCommentsUpdated;
+		setPosts(prevState => ({
+			...prevState,
+			postsAndComments
+		}));
+
+
 		// setShowCommentButton({
 		// 	displayCommentButton: true,
-		// 	isDisabledCommentButton: true
-		// });
-		// setNewComment({
-		// 	newCommentValue: ""
+		// 	isDisabledCommentButton: e.target.value ? false : true
 		// });
 	};
-	// const [newComment, setNewComment] = useState({
-	// 	newCommentValue: "Leave your comment here.."
-	// });
+	const handleCommentSubmit = async  (e) => {
+    e.preventDefault();
+    let commentPostId = parseInt(e.target.name)
+    let newComment = posts.postsAndComments.filter(item => item.postId === parseInt(commentPostId))[0].newComment
+		const transaction = [
+			{
+				"_id": commentPostId,
+				"post/comments": ["comment$1"]
+			},
+			{
+				"_id": "comment$1",
+				"comment/person": parseInt(posts.currentUserId),
+				"comment/message": newComment
+			}
+		];
 
-	// const handleNewCommentOnChange = e => {
-	// 	setNewComment({
-	// 		newCommentValue: e.target.value
-	// 	});
-
-	// 	setShowCommentButton({
-	// 		displayCommentButton: true,
-	// 		isDisabledCommentButton: e.target.value ? false : true
-	// 	});
-	// };
-	// const handleCommentSubmit = async e => {
-	// 	e.preventDefault();
-	// 	let newCommentMessage = newComment.newCommentValue;
-	// 	const transaction = [
-	// 		{
-	// 			_id: "post$1",
-	// 			"post/message": newCommentMessage,
-	// 			"post/person": parseInt(posts.currentUserId),
-	// 			"post/likes": 0,
-	// 			"post/comments": []
-	// 		},
-	// 		{
-	// 			_id: parseInt(posts.currentUserId),
-	// 			"person/posts": ["post$1"]
-	// 		}
-	// 	];
-
-	// 	try {
-	// 		const res = await flureeFetch("/transact", transaction);
-	// 		//console.log(res);
-	// 		refreshPosts(posts.currentUserId);
-	// 		setNewComment({
-	// 			newCommentValue: ""
-	// 		});
-	// 		// setShowPostButton({
-	// 		// 	displayPostButton: true,
-	// 		// 	isDisabledPostButton: true
-	// 		// });
-	// 		if (!res) {
-	// 			throw new Error("Error transacting transaction.");
-	// 		}
-	// 	} catch (err) {
-	// 		console.log(err);
-	// 	}
-	// };
+		try {
+			const res = await flureeFetch("/transact", transaction);
+		
+			refreshPosts(posts.currentUserId);
+		
+		
+			if (!res) {
+				throw new Error("Error transacting transaction.");
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	};
 
 	return (
 		<div className="App">
@@ -382,19 +405,21 @@ function App() {
 									: ""}
 								<div className="add-new-comment-textarea-and-comment-button-wrapper">
 									<form
+										name={item.postId}
 										className="addCommentForm"
-										// onSubmit={handleCommentSubmit}
+										onSubmit={handleCommentSubmit}
 									>
 										<textarea
 											name={item.postId}
 											className="addNewPost"
-											onFocus={() => handleNewCommentOnFocus()}
-											// onChange={handleNewCommentOnChange}
-											// value={newComment.newCommentValue}
+											onFocus={e => handleNewCommentOnFocus(e)}
+											onChange={handleNewCommentOnChange}
+											value={item.newComment}
+											placeholder="Leave a comment..."
 										></textarea>
-										{showCommentButton.displayCommentButton ? (
+										{item.showCommentButton ? (
 											<button
-												// disabled={showCommentButton.isDisabledCommentButton}
+												disabled={item.isDisabledCommentButton}
 												className="addNewPostButton"
 												type="submit"
 											>
