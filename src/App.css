@@ -86,7 +86,8 @@
   border-radius: 4px;
 }
 
-.add-new-post-textarea-and-post-button-wrapper {
+.add-new-post-textarea-and-post-button-wrapper,
+.add-new-comment-textarea-and-comment-button-wrapper {
   margin-bottom: 20px;
 }
 .post-message-comments-likes-icon-container
@@ -129,6 +130,9 @@
 .addComment {
   resize: none;
   border-radius: .4em;
+}
+.add-new-comment-textarea-and-comment-button-wrapper {
+  width: max-content;
 }
 
 

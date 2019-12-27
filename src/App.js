@@ -6,17 +6,22 @@ import "./App.css";
 function App() {
 	const [posts, setPosts] = useState({
 		postsAndComments: [],
-    currentUserId: null,
-    showAddNewPost: false
+		currentUserId: null,
+		showAddNewPost: false
 	});
 
-	const updatePosts = ({ postsAndComments, currentUserId, showAddNewPost, newPost }) =>
+	const updatePosts = ({
+		postsAndComments,
+		currentUserId,
+		showAddNewPost,
+		newPost
+	}) =>
 		setPosts(prevState => ({
 			...prevState,
 			postsAndComments,
-      currentUserId,
-      showAddNewPost,
-      newPost
+			currentUserId,
+			showAddNewPost,
+			newPost
 		}));
 
 	const refreshPosts = async id => {
@@ -101,12 +106,12 @@ function App() {
 				...individualPostsAndComments,
 				...followsPostsAndComments
 			];
-      const currentUserId = id;
-      const showAddNewPost = true;
+			const currentUserId = id;
+			const showAddNewPost = true;
 			updatePosts({
 				postsAndComments,
-        currentUserId,
-        showAddNewPost
+				currentUserId,
+				showAddNewPost
 			});
 		} catch (err) {
 			console.log(err);
@@ -123,25 +128,26 @@ function App() {
 	};
 
 	const addLikes = async e => {
-
 		e.preventDefault();
 		// console.log(e);
 		// console.log(e.target);
 
 		const postId = parseInt(e.target.id);
 		if (postId) {
-     let currentLikes =  posts.postsAndComments.filter(item => item.postId === postId)[0].likes
-     
+			let currentLikes = posts.postsAndComments.filter(
+				item => item.postId === postId
+			)[0].likes;
+
 			const transaction = [
 				{
 					_id: postId,
-					likes: (currentLikes + 1)
+					likes: currentLikes + 1
 				}
 			];
 			try {
 				const res = await flureeFetch("/transact", transaction);
-        // console.log(res);
-        refreshPosts(posts.currentUserId)
+				// console.log(res);
+				refreshPosts(posts.currentUserId);
 				if (!res) {
 					throw new Error("Error transacting transaction.");
 				}
@@ -149,9 +155,7 @@ function App() {
 				console.log(err);
 			}
 		}
-  };
-  
- 
+	};
 
 	const [users, setUsers] = useState([]);
 
@@ -178,82 +182,143 @@ function App() {
 	useEffect(() => {
 		getUsers();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setUsers]);
+	}, [setUsers]);
 
+	/***********************************************************
+	 ***************** Add Post Section  ***********************
+	 ***********************************************************/
 
-  const [showPostButton, setShowPostButton] = useState({
+	const [showPostButton, setShowPostButton] = useState({
 		displayButton: false,
 		isDisabledPostButton: true
 	});
-  const handldeOnFocus = () => {
-    setShowPostButton({
-      displayPostButton: true,
-      isDisabledPostButton: true
-    })
-    setNewPost(
-      {
-        newPostValue: ""
-      }
-    )
-  }
+	const handldeOnFocus = () => {
+		setShowPostButton({
+			displayPostButton: true,
+			isDisabledPostButton: true
+		});
+		setNewPost({
+			newPostValue: ""
+		});
+	};
 
-  const [newPost, setNewPost] = useState({
-    newPostValue: "Leave a funny post..",
-    
-  })
-  const handleNewPostOnChange = e => {
-    setNewPost(
-      {
-        newPostValue: e.target.value
-      }
-    )
+	const [newPost, setNewPost] = useState({
+		newPostValue: "Leave a funny post.."
+	});
+	const handleNewPostOnChange = e => {
+		setNewPost({
+			newPostValue: e.target.value
+		});
 
-    setShowPostButton(
-      {
-        displayPostButton: true,
-        isDisabledPostButton: e.target.value ? false : true
-      }
-    )
-  }
+		setShowPostButton({
+			displayPostButton: true,
+			isDisabledPostButton: e.target.value ? false : true
+		});
+	};
 
-  const handlePostSubmit = async (e) => {
-    e.preventDefault();
-    let newPostMessage = newPost.newPostValue
-    const transaction = [
+	const handlePostSubmit = async e => {
+		e.preventDefault();
+		let newPostMessage = newPost.newPostValue;
+		const transaction = [
 			{
-				"_id": "post$1",
+				_id: "post$1",
 				"post/message": newPostMessage,
 				"post/person": parseInt(posts.currentUserId),
 				"post/likes": 0,
 				"post/comments": []
 			},
 			{
-				"_id": parseInt(posts.currentUserId),
+				_id: parseInt(posts.currentUserId),
 				"person/posts": ["post$1"]
 			}
-    ];
-  
-      	try {
-					const res = await flureeFetch("/transact", transaction);
-					//console.log(res);
-          refreshPosts(posts.currentUserId);
-          setNewPost({
-            newPostValue: ""
-          });
-          setShowPostButton({
-						displayPostButton: true,
-						isDisabledPostButton: true
-					});
-					if (!res) {
-						throw new Error("Error transacting transaction.");
-					}
-				} catch (err) {
-					console.log(err);
-				}
-    
-    
-	
+		];
+
+		try {
+			const res = await flureeFetch("/transact", transaction);
+			//console.log(res);
+			refreshPosts(posts.currentUserId);
+			setNewPost({
+				newPostValue: ""
+			});
+			setShowPostButton({
+				displayPostButton: true,
+				isDisabledPostButton: true
+			});
+			if (!res) {
+				throw new Error("Error transacting transaction.");
+			}
+		} catch (err) {
+			console.log(err);
+		}
 	};
+
+	/***********************************************************
+	 ******************* Add Comment Section ********************
+	 ***********************************************************/
+	const [showCommentButton, setShowCommentButton] = useState({
+		displayCommentButton: false,
+		isDisabledCommentButton: true
+	});
+	const handleNewCommentOnFocus = () => {
+		setShowCommentButton({
+			displayCommentButton: true,
+			isDisabledCommentButton: true
+		});
+		setNewComment({
+			newCommentValue: ""
+		});
+		console.log(showCommentButton);
+	};
+	const [newComment, setNewComment] = useState({
+		newCommentValue: "Leave your comment here.."
+	});
+
+	const handleNewCommentOnChange = e => {
+		setNewComment({
+			newCommentValue: e.target.value
+		});
+
+		setShowCommentButton({
+			displayCommentButton: true,
+			isDisabledCommentButton: e.target.value ? false : true
+		});
+	};
+	const handleCommentSubmit = async e => {
+		e.preventDefault();
+		let newCommentMessage = newComment.newCommentValue;
+		const transaction = [
+			{
+				_id: "post$1",
+				"post/message": newCommentMessage,
+				"post/person": parseInt(posts.currentUserId),
+				"post/likes": 0,
+				"post/comments": []
+			},
+			{
+				_id: parseInt(posts.currentUserId),
+				"person/posts": ["post$1"]
+			}
+		];
+
+		try {
+			const res = await flureeFetch("/transact", transaction);
+			//console.log(res);
+			refreshPosts(posts.currentUserId);
+			setNewComment({
+				newCommentValue: ""
+			});
+			// setShowPostButton({
+			// 	displayPostButton: true,
+			// 	isDisabledPostButton: true
+			// });
+			if (!res) {
+				throw new Error("Error transacting transaction.");
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
 	return (
 		<div className="App">
 			<header className="App-header">
@@ -310,21 +375,38 @@ function App() {
 									</div>
 								</div>
 							</div>
-							{true ? (
-								<div className="post-comments">
-									{item.totalComments
-										? item.comments.map(item => (
-												<p className="comment-message speech-bubble">{item}</p>
-										  ))
-										: ""}
-									<textarea
-										className="addComment"
-										placeholder="Leave a comment..."
-									></textarea>
+							<div className="post-comments">
+								{item.totalComments
+									? item.comments.map(item => (
+											<p className="comment-message speech-bubble">{item}</p>
+									  ))
+									: ""}
+								<div className="add-new-comment-textarea-and-comment-button-wrapper">
+									<form
+										className="addCommentForm"
+										onSubmit={handleCommentSubmit}
+									>
+										<textarea
+											name={item.postId}
+											className="addNewPost"
+											onFocus={() => handleNewCommentOnFocus()}
+											onChange={handleNewCommentOnChange}
+											value={newComment.newCommentValue}
+										></textarea>
+										{showCommentButton.displayCommentButton ? (
+											<button
+												disabled={showCommentButton.isDisabledCommentButton}
+												className="addNewPostButton"
+												type="submit"
+											>
+												Comment
+											</button>
+										) : (
+											""
+										)}
+									</form>
 								</div>
-							) : (
-								" "
-							)}
+							</div>
 						</div>
 					))}
 				</div>
