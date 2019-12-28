@@ -60,7 +60,7 @@ var flureeFetch = (uri, body) => {
 	const gateway = isDev
 		? "http://localhost:8080/fdb"
 		: "https://db.flur.ee/api/db";
-	const db = isDev ? "/test/post-appv4" : "/tcdemo/test";
+	const db = isDev ? "/test/post-appv5" : "/tcdemo/test";
 	let fullUri;
 	if (uri === "/new-db") {
 		fullUri = gateway + uri;

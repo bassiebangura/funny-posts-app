@@ -72,11 +72,9 @@ function App() {
 		};
 		try {
 			let res = await flureeFetch("/query", query);
-			//console.log(res)
 			if (!res) {
 				throw new Error("Error fetching posts.");
 			}
-			//console.log(res);
 			const { follows, posts } = res;
 			const individualPostsAndComments = posts.map(item => ({
 				postId: item._id,
@@ -137,8 +135,6 @@ function App() {
 
 	const addLikes = async e => {
 		e.preventDefault();
-		// console.log(e);
-		// console.log(e.target);
 
 		const postId = parseInt(e.target.id);
 		if (postId) {
@@ -146,15 +142,16 @@ function App() {
 				item => item.postId === postId
 			)[0].likes;
 
+    
 			const transaction = [
 				{
 					_id: postId,
-					likes: currentLikes + 1
-				}
+          //likes: "#(inc  0)"
+          likes: (currentLikes + 1)
+				} 
 			];
 			try {
 				const res = await flureeFetch("/transact", transaction);
-				// console.log(res);
 				refreshPosts(posts.currentUserId);
 				if (!res) {
 					throw new Error("Error transacting transaction.");
@@ -243,7 +240,7 @@ function App() {
 
 		try {
 			const res = await flureeFetch("/transact", transaction);
-			//console.log(res);
+
 			refreshPosts(posts.currentUserId);
 			setNewPost({
 				newPostValue: ""
@@ -263,40 +260,34 @@ function App() {
 	/***********************************************************
 	 ******************* Add Comment Section ********************
 	 ***********************************************************/
-	// const [showCommentButton, setShowCommentButton] = useState({
-	// 	displayCommentButton: false,
-	// 	isDisabledCommentButton: true
-  // });
-  	// showCommentButton: true,
-		// 		isDisabledCommentButton: true,
-		// 		newComment: "Leave you comment...."
+
 	const handleNewCommentOnFocus = e => {
-    let commentPostId = parseInt(e.target.name);
-    let arrayOfPostsAndComments = posts.postsAndComments;//must refactor
-    let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
-      return {
+		let commentPostId = parseInt(e.target.name);
+		let arrayOfPostsAndComments = posts.postsAndComments; //must refactor
+		let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
+			return {
 				...item,
-				isDisabledCommentButton: commentPostId === item.postId ? false : true,
+				isDisabledCommentButton: commentPostId === item.postId ? true : false,
 				showCommentButton: commentPostId === item.postId ? true : false
 			};
-    })
-    let postsAndComments = arrayOfPostsAndCommentsUpdated
+		});
+		let postsAndComments = arrayOfPostsAndCommentsUpdated;
 		setPosts(prevState => ({
 			...prevState,
 			postsAndComments
 		}));
-
 	};
 
-
 	const handleNewCommentOnChange = e => {
-    let commentPostId = parseInt(e.target.name);
-    let	newCommentValue= e.target.value;
-    let arrayOfPostsAndComments = posts.postsAndComments;//must refactor
+		let commentPostId = parseInt(e.target.name);
+		let newCommentValue = e.target.value;
+		let arrayOfPostsAndComments = posts.postsAndComments; //must refactor
 		let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
 			return {
 				...item,
-				newComment: commentPostId === item.postId ?  newCommentValue: item.newComment
+				isDisabledCommentButton: e.target.value ? false : true,
+				newComment:
+					commentPostId === item.postId ? newCommentValue : item.newComment
 			};
 		});
 		let postsAndComments = arrayOfPostsAndCommentsUpdated;
@@ -305,23 +296,24 @@ function App() {
 			postsAndComments
 		}));
 
-
 		// setShowCommentButton({
 		// 	displayCommentButton: true,
 		// 	isDisabledCommentButton: e.target.value ? false : true
 		// });
 	};
-	const handleCommentSubmit = async  (e) => {
-    e.preventDefault();
-    let commentPostId = parseInt(e.target.name)
-    let newComment = posts.postsAndComments.filter(item => item.postId === parseInt(commentPostId))[0].newComment
+	const handleCommentSubmit = async e => {
+		e.preventDefault();
+		let commentPostId = parseInt(e.target.name);
+		let newComment = posts.postsAndComments.filter(
+			item => item.postId === parseInt(commentPostId)
+		)[0].newComment;
 		const transaction = [
 			{
-				"_id": commentPostId,
+				_id: commentPostId,
 				"post/comments": ["comment$1"]
 			},
 			{
-				"_id": "comment$1",
+				_id: "comment$1",
 				"comment/person": parseInt(posts.currentUserId),
 				"comment/message": newComment
 			}
@@ -329,10 +321,9 @@ function App() {
 
 		try {
 			const res = await flureeFetch("/transact", transaction);
-		
+
 			refreshPosts(posts.currentUserId);
-		
-		
+
 			if (!res) {
 				throw new Error("Error transacting transaction.");
 			}

@@ -92,24 +92,5 @@
 		"restrictCollection": "person"
 	}
 ]
-	//transaction to add comment to a post
-[
 
-
-	
-    {
-    "_id":369435906932749,
-    "post/message": "Transact blend keili 4 to 5",
-    "post/likes": 425,
-    "post/comments": [
-        "comment$1"
-        ]
-    },
-    {
-        "_id": "comment$1",
-        "comment/person": 351843720888325,
-        "comment/message": "hey 4 to 5"
-    }
-
-]
 

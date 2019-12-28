@@ -22,7 +22,7 @@
 		"fullName": "Achie Paul",
 		"age": 34,
 		"follows": ["person$jsuleman", "person$ekoroma", "person$kkanagboh"],
-		"posts": ["post$paul1"]
+		"posts": ["post$apaul1"]
 	},
 	{
 		"_id": "person$jagaowa",
