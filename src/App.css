@@ -63,7 +63,8 @@
   margin-right: 0.15em;
 }
 
-.likes-icon-svg{
+.likes-icon-svg,
+.comments-icon-svg{
   cursor: pointer;
 }
 

@@ -86,7 +86,7 @@ function App() {
 				totalComments: item.comments
 					? generateArrayOfCommentsMessage(item.comments).length
 					: 0,
-				showComments: false,
+				showPostComments: false,
 				showCommentButton: false,
 				isDisabledCommentButton: true,
 				newComment: ""
@@ -103,7 +103,7 @@ function App() {
 				totalComments: item.comments
 					? generateArrayOfCommentsMessage(item.comments).length
 					: 0,
-				showComments: false,
+				showPostComments: false,
 				showCommentButton: false,
 				isDisabledCommentButton: true,
 				newComment: ""
@@ -137,18 +137,18 @@ function App() {
 		e.preventDefault();
 
 		const postId = parseInt(e.target.id);
+		//console.log(e.target);
 		if (postId) {
 			let currentLikes = posts.postsAndComments.filter(
 				item => item.postId === postId
 			)[0].likes;
 
-    
 			const transaction = [
 				{
 					_id: postId,
-          //likes: "#(inc  0)"
-          likes: (currentLikes + 1)
-				} 
+					//likes: "#(inc  0)"
+					likes: currentLikes + 1
+				}
 			];
 			try {
 				const res = await flureeFetch("/transact", transaction);
@@ -301,6 +301,27 @@ function App() {
 		// 	isDisabledCommentButton: e.target.value ? false : true
 		// });
 	};
+	const handleDisplayComments = e => {
+		e.preventDefault();
+
+		console.log(e.target.id);
+		let commentPostId = parseInt(e.target.id);
+		let arrayOfPostsAndComments = posts.postsAndComments; //must refactor
+		let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
+			return {
+				...item,
+				showPostComments:
+					commentPostId === item.postId
+						? !item.showPostComments
+						: item.showPostComments
+			};
+		});
+		let postsAndComments = arrayOfPostsAndCommentsUpdated;
+		setPosts(prevState => ({
+			...prevState,
+			postsAndComments
+		}));
+	};
 	const handleCommentSubmit = async e => {
 		e.preventDefault();
 		let commentPostId = parseInt(e.target.name);
@@ -323,6 +344,21 @@ function App() {
 			const res = await flureeFetch("/transact", transaction);
 
 			refreshPosts(posts.currentUserId);
+			let arrayOfPostsAndComments = posts.postsAndComments; //must refactor
+			let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
+				return {
+					...item,
+					showPostComments:
+						commentPostId === item.postId
+							? false
+							: item.showPostComments
+				};
+			});
+			let postsAndComments = arrayOfPostsAndCommentsUpdated;
+			setPosts(prevState => ({
+				...prevState,
+				postsAndComments
+			}));
 
 			if (!res) {
 				throw new Error("Error transacting transaction.");
@@ -372,7 +408,11 @@ function App() {
 								<div className="comments-likes-wrapper left-align">
 									<div className="comments-icon-total-comments-wrapper">
 										<span className="comments-icon">
-											<FaRegComments />
+											<FaRegComments
+												id={item.postId}
+												onClick={handleDisplayComments}
+												className="comments-icon-svg"
+											/>
 										</span>
 										<span className="total-comments">{item.totalComments}</span>
 									</div>
@@ -388,40 +428,46 @@ function App() {
 									</div>
 								</div>
 							</div>
-							<div className="post-comments">
-								{item.totalComments
-									? item.comments.map(item => (
-											<p className="comment-message speech-bubble">{item}</p>
-									  ))
-									: ""}
-								<div className="add-new-comment-textarea-and-comment-button-wrapper">
-									<form
-										name={item.postId}
-										className="addCommentForm"
-										onSubmit={handleCommentSubmit}
-									>
-										<textarea
+							{item.showPostComments ? (
+								<div className="post-comments">
+									{item.totalComments
+										? item.comments.map(item => (
+												<p className="comment-message speech-bubble">{item}</p>
+										  ))
+										: ""}
+									<div className="add-new-comment-textarea-and-comment-button-wrapper">
+										<form
 											name={item.postId}
-											className="addNewPost"
-											onFocus={e => handleNewCommentOnFocus(e)}
-											onChange={handleNewCommentOnChange}
-											value={item.newComment}
-											placeholder="Leave a comment..."
-										></textarea>
-										{item.showCommentButton ? (
-											<button
-												disabled={item.isDisabledCommentButton}
-												className="addNewPostButton"
-												type="submit"
-											>
-												Comment
-											</button>
-										) : (
-											""
-										)}
-									</form>
+											className="addCommentForm"
+											onSubmit={handleCommentSubmit}
+										>
+											<textarea
+												name={item.postId}
+												className="addNewPost"
+												onFocus={e => handleNewCommentOnFocus(e)}
+												onChange={handleNewCommentOnChange}
+												value={item.newComment}
+												placeholder="Leave a comment..."
+											></textarea>
+											{item.showCommentButton ? (
+												<button
+													disabled={item.isDisabledCommentButton}
+													className="addNewPostButton"
+													type="submit"
+												>
+													Comment
+												</button>
+											) : (
+												""
+											)}
+										</form>
+									</div>
 								</div>
-							</div>
+							) : (
+								""
+							)}
+
+							{/* end */}
 						</div>
 					))}
 				</div>
