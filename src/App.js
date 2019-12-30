@@ -76,24 +76,13 @@ function App() {
 				throw new Error("Error fetching posts.");
 			}
 			const { follows, posts } = res;
-			const individualPostsAndComments = posts.map(item => ({
-				postId: item._id,
-				message: item.message,
-				comments: item.comments
-					? generateArrayOfCommentsMessage(item.comments)
-					: [],
-				likes: item.likes,
-				totalComments: item.comments
-					? generateArrayOfCommentsMessage(item.comments).length
-					: 0,
-				showPostComments: false,
-				showCommentButton: false,
-				isDisabledCommentButton: true,
-				newComment: ""
-			}));
 			const followsPostsNested = follows.map(item => item.posts);
-			const followsPosts = followsPostsNested.flat();
-			const followsPostsAndComments = followsPosts.map(item => ({
+			const followsPostsAndComments = followsPostsNested.flat();
+			const postsAndComments = [
+				...posts,
+				...followsPostsAndComments
+			].map(
+        item => ({
 				postId: item._id,
 				message: item.message,
 				comments: item.comments
@@ -107,11 +96,8 @@ function App() {
 				showCommentButton: false,
 				isDisabledCommentButton: true,
 				newComment: ""
-			}));
-			const postsAndComments = [
-				...individualPostsAndComments,
-				...followsPostsAndComments
-			];
+			})
+      );
 			const currentUserId = id;
 			const showAddNewPost = true;
 			updatePosts({
@@ -304,7 +290,7 @@ function App() {
 	const handleDisplayComments = e => {
 		e.preventDefault();
 
-		console.log(e.target.id);
+		//console.log(e.target.id);
 		let commentPostId = parseInt(e.target.id);
 		let arrayOfPostsAndComments = posts.postsAndComments; //must refactor
 		let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
