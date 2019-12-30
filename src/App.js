@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { flureeFetch } from "./flureeFetch";
 import { FaRegComments, FaRegThumbsUp } from "react-icons/fa";
+import UsersContext, {UsersProvider} from "./context/UsersContext";
+import LandingPage from "./screens/LandingPage";
+import {
+	BrowserRouter,
+	Route,
+	Switch,
+	useLocation,
+	useHistory
+} from "react-router-dom";
 import "./App.css";
 
 function App() {
@@ -354,126 +363,131 @@ function App() {
 	};
 
 	return (
-		<div className="App">
-			<header className="App-header">
-				<h1>Funny Post App</h1>
-			</header>
-			<div className="users-and-posts-wrapper">
-				<div className="timeline-wrapper">
-					{posts.showAddNewPost ? (
-						<div className="add-new-post-textarea-and-post-button-wrapper">
-							<form className="addNewPostForm" onSubmit={handlePostSubmit}>
-								<textarea
-									className="addNewPost"
-									onFocus={() => handldeOnFocus()}
-									onChange={handleNewPostOnChange}
-									value={newPost.newPostValue}
-								></textarea>
-								{showPostButton.displayPostButton ? (
-									<button
-										disabled={showPostButton.isDisabledPostButton}
-										className="addNewPostButton"
-										type="submit"
-									>
-										Post
-									</button>
-								) : (
-									""
-								)}
-							</form>
-						</div>
-					) : (
-						" "
-					)}
 
-					{posts.postsAndComments.map(item => (
-						<div className="posts-container">
-							<div className="post-message-comments-likes-icon-container">
-								<p className="post-message left-align">{item.message}</p>
-								<div className="comments-likes-wrapper left-align">
-									<div className="comments-icon-total-comments-wrapper">
-										<span className="comments-icon">
-											<FaRegComments
-												id={item.postId}
-												onClick={handleDisplayComments}
-												className="comments-icon-svg"
-											/>
-										</span>
-										<span className="total-comments">{item.totalComments}</span>
-									</div>
-									<div className="likes-icon-total-likes-wrapper">
-										<span className="likes-icon">
-											<FaRegThumbsUp
-												id={item.postId}
-												onClick={addLikes}
-												className="likes-icon-svg"
-											/>
-										</span>
-										<span className="total-likes"> {item.likes}</span>
-									</div>
-								</div>
-							</div>
-							{item.showPostComments ? (
-								<div className="post-comments">
-									{item.totalComments
-										? item.comments.map(item => (
-												<p className="comment-message speech-bubble">{item}</p>
-										  ))
-										: ""}
-									<div className="add-new-comment-textarea-and-comment-button-wrapper">
-										<form
-											name={item.postId}
-											className="addCommentForm"
-											onSubmit={handleCommentSubmit}
-										>
-											<textarea
-												name={item.postId}
-												className="addNewPost"
-												onFocus={e => handleNewCommentOnFocus(e)}
-												onChange={handleNewCommentOnChange}
-												value={item.newComment}
-												placeholder="Leave a comment..."
-											></textarea>
-											{item.showCommentButton ? (
-												<button
-													disabled={item.isDisabledCommentButton}
-													className="addNewPostButton"
-													type="submit"
-												>
-													Comment
-												</button>
-											) : (
-												""
-											)}
-										</form>
-									</div>
-								</div>
-							) : (
-								""
-							)}
+    <UsersProvider value={users}>
+      <LandingPage />
+    </UsersProvider>
+    
+		// <div className="App">
+		// 	<header className="App-header">
+		// 		<h1>Funny Post App</h1>
+		// 	</header>
+		// 	<div className="users-and-posts-wrapper">
+		// 		<div className="timeline-wrapper">
+		// 			{posts.showAddNewPost ? (
+		// 				<div className="add-new-post-textarea-and-post-button-wrapper">
+		// 					<form className="addNewPostForm" onSubmit={handlePostSubmit}>
+		// 						<textarea
+		// 							className="addNewPost"
+		// 							onFocus={() => handldeOnFocus()}
+		// 							onChange={handleNewPostOnChange}
+		// 							value={newPost.newPostValue}
+		// 						></textarea>
+		// 						{showPostButton.displayPostButton ? (
+		// 							<button
+		// 								disabled={showPostButton.isDisabledPostButton}
+		// 								className="addNewPostButton"
+		// 								type="submit"
+		// 							>
+		// 								Post
+		// 							</button>
+		// 						) : (
+		// 							""
+		// 						)}
+		// 					</form>
+		// 				</div>
+		// 			) : (
+		// 				" "
+		// 			)}
 
-							{/* end */}
-						</div>
-					))}
-				</div>
+		// 			{posts.postsAndComments.map(item => (
+		// 				<div className="posts-container">
+		// 					<div className="post-message-comments-likes-icon-container">
+		// 						<p className="post-message left-align">{item.message}</p>
+		// 						<div className="comments-likes-wrapper left-align">
+		// 							<div className="comments-icon-total-comments-wrapper">
+		// 								<span className="comments-icon">
+		// 									<FaRegComments
+		// 										id={item.postId}
+		// 										onClick={handleDisplayComments}
+		// 										className="comments-icon-svg"
+		// 									/>
+		// 								</span>
+		// 								<span className="total-comments">{item.totalComments}</span>
+		// 							</div>
+		// 							<div className="likes-icon-total-likes-wrapper">
+		// 								<span className="likes-icon">
+		// 									<FaRegThumbsUp
+		// 										id={item.postId}
+		// 										onClick={addLikes}
+		// 										className="likes-icon-svg"
+		// 									/>
+		// 								</span>
+		// 								<span className="total-likes"> {item.likes}</span>
+		// 							</div>
+		// 						</div>
+		// 					</div>
+		// 					{item.showPostComments ? (
+		// 						<div className="post-comments">
+		// 							{item.totalComments
+		// 								? item.comments.map(item => (
+		// 										<p className="comment-message speech-bubble">{item}</p>
+		// 								  ))
+		// 								: ""}
+		// 							<div className="add-new-comment-textarea-and-comment-button-wrapper">
+		// 								<form
+		// 									name={item.postId}
+		// 									className="addCommentForm"
+		// 									onSubmit={handleCommentSubmit}
+		// 								>
+		// 									<textarea
+		// 										name={item.postId}
+		// 										className="addNewPost"
+		// 										onFocus={e => handleNewCommentOnFocus(e)}
+		// 										onChange={handleNewCommentOnChange}
+		// 										value={item.newComment}
+		// 										placeholder="Leave a comment..."
+		// 									></textarea>
+		// 									{item.showCommentButton ? (
+		// 										<button
+		// 											disabled={item.isDisabledCommentButton}
+		// 											className="addNewPostButton"
+		// 											type="submit"
+		// 										>
+		// 											Comment
+		// 										</button>
+		// 									) : (
+		// 										""
+		// 									)}
+		// 								</form>
+		// 							</div>
+		// 						</div>
+		// 					) : (
+		// 						""
+		// 					)}
 
-				<div className="users-container">
-					{users.map(item => {
-						return (
-							<button
-								onClick={handleSubmit}
-								id={item._id}
-								key={item._id}
-								className="users-button"
-								disabled={item.isDisabled}
-							>
-								{item.fullName}
-							</button>
-						);
-					})}
-				</div>
-			</div>
-		</div>
+		// 					{/* end */}
+		// 				</div>
+		// 			))}
+		// 		</div>
+
+		// 		<div className="users-container">
+		// 			{users.map(item => {
+		// 				return (
+		// 					<button
+		// 						onClick={handleSubmit}
+		// 						id={item._id}
+		// 						key={item._id}
+		// 						className="users-button"
+		// 						disabled={item.isDisabled}
+		// 					>
+		// 						{item.fullName}
+		// 					</button>
+		// 				);
+		// 			})}
+		// 		</div>
+		// 	</div>
+		// </div>
 	);
 }
 
