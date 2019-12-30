@@ -132,8 +132,8 @@ function App() {
 			const transaction = [
 				{
 					_id: postId,
-					//likes: "#(inc  0)"
-					likes: currentLikes + 1
+					likes: `#(inc ${currentLikes})`
+					// likes: currentLikes + 1
 				}
 			];
 			try {
