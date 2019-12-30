@@ -133,7 +133,6 @@ function App() {
 				{
 					_id: postId,
 					likes: `#(inc ${currentLikes})`
-					// likes: currentLikes + 1
 				}
 			];
 			try {
