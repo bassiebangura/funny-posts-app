@@ -5,6 +5,7 @@ import { FaRegComments, FaRegThumbsUp } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import Header from "../components/Header";
 function UserTimelinePage() {
+	const contextValue = useContext(PostsContext);
 	const {
 		postsAndComments,
 		currentUserId,
@@ -16,7 +17,7 @@ function UserTimelinePage() {
 
 	// const { id } = useParams();
 	// //refreshPosts(id)
-	// console.log(postsAndComments);
+	// console.log(valueRC);
 
 	/***********************************************************
 	 ***************** Add Post Section  ***********************
@@ -92,7 +93,7 @@ function UserTimelinePage() {
 
 	const handleNewCommentOnFocus = e => {
 		let commentPostId = parseInt(e.target.name);
-		let arrayOfPostsAndComments = postsAndComments;
+		let arrayOfPostsAndComments = contextValue.postsAndComments;
 		let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
 			return {
 				...item,
@@ -230,13 +231,21 @@ function UserTimelinePage() {
 							<div className="comments-likes-wrapper left-align">
 								<div className="comments-icon-total-comments-wrapper">
 									<span className="comments-icon">
-										<FaRegComments />
+										<FaRegComments
+											id={item.postId}
+											onClick={handleDisplayComments}
+											className="comments-icon-svg"
+										/>
 									</span>
 									<span className="total-comments">{item.totalComments}</span>
 								</div>
 								<div className="likes-icon-total-likes-wrapper">
 									<span className="likes-icon">
-										<FaRegThumbsUp />
+										<FaRegThumbsUp
+											id={item.postId}
+											//onClick={addLikes}
+											className="likes-icon-svg"
+										/>
 									</span>
 									<span className="total-likes"> {item.likes}</span>
 								</div>
