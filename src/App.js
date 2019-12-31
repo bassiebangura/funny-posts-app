@@ -106,14 +106,12 @@ function App() {
   	const updatePosts = ({
 			postsAndComments,
 			currentUserId,
-			showAddNewPost,
 			newPost
 		}) =>
 			setPosts(prevState => ({
 				...prevState,
 				postsAndComments,
 				currentUserId,
-				showAddNewPost,
 				newPost
 			}));
 	// useEffect(() => {

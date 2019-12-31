@@ -9,15 +9,13 @@ function UserTimelinePage() {
 	const {
 		postsAndComments,
 		currentUserId,
-		showAddNewPost,
-		newComment,
 		updatePosts,
 		refreshPosts
 	} = useContext(PostsContext);
 
-	// const { id } = useParams();
-	// //refreshPosts(id)
-	// console.log(valueRC);
+	const { id } = useParams();
+	//refreshPosts(id)
+	console.log(contextValue);
 
 	/***********************************************************
 	 ***************** Add Post Section  ***********************
@@ -101,42 +99,48 @@ function UserTimelinePage() {
 				showCommentButton: commentPostId === item.postId ? true : false
 			};
 		});
+		let currentUserId = contextValue.currentUserId
 		let postsAndComments = arrayOfPostsAndCommentsUpdated;
-		updatePosts(prevState => ({
-			...prevState,
-			postsAndComments
-		}));
+		updatePosts({
+			postsAndComments,
+			currentUserId
+		});
 	};
 
-	// const handleNewCommentOnChange = e => {
-	// 	let commentPostId = parseInt(e.target.name);
-	// 	let newCommentValue = e.target.value;
-	// 	let arrayOfPostsAndComments = posts.postsAndComments; //must refactor
-	// 	let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
-	// 		return {
-	// 			...item,
-	// 			isDisabledCommentButton: e.target.value ? false : true,
-	// 			newComment:
-	// 				commentPostId === item.postId ? newCommentValue : item.newComment
-	// 		};
-	// 	});
-	// 	let postsAndComments = arrayOfPostsAndCommentsUpdated;
-	// 	setPosts(prevState => ({
-	// 		...prevState,
-	// 		postsAndComments
-	// 	}));
+	const handleNewCommentOnChange = e => {
+		let commentPostId = parseInt(e.target.name);
+		let newCommentValue = e.target.value;
 
-	// 	// setShowCommentButton({
-	// 	// 	displayCommentButton: true,
-	// 	// 	isDisabledCommentButton: e.target.value ? false : true
-	// 	// });
-	// };
+		let arrayOfPostsAndComments = contextValue.postsAndComments; //must refactor
+		let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
+			return {
+				...item,
+				isDisabledCommentButton: e.target.value ? false : true,
+				newComment:
+					commentPostId === item.postId ? newCommentValue : item.newComment
+			};
+		});
+
+		let currentUserId = contextValue.currentUserId// we add currentUserId because the updatePosts fxn is expecting it if not it will be undefined
+		let postsAndComments = arrayOfPostsAndCommentsUpdated;
+		updatePosts({
+			currentUserId,
+			postsAndComments
+		});
+
+		// setShowCommentButton({
+		// 	displayCommentButton: true,
+		// 	isDisabledCommentButton: e.target.value ? false : true
+		// });
+	};
 	const handleDisplayComments = e => {
 		e.preventDefault();
 
 		//console.log(e.target.id);
 		let commentPostId = parseInt(e.target.id);
-		let arrayOfPostsAndComments = postsAndComments; //must refactor
+			let arrayOfPostsAndComments = contextValue.postsAndComments;
+
+		
 		let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
 			return {
 				...item,
@@ -153,56 +157,58 @@ function UserTimelinePage() {
 			currentUserId,
 			showAddNewPost
 		});
+
 	};
-	// const handleCommentSubmit = async e => {
-	// 	e.preventDefault();
-	// 	let commentPostId = parseInt(e.target.name);
-	// 	let newComment = posts.postsAndComments.filter(
-	// 		item => item.postId === parseInt(commentPostId)
-	// 	)[0].newComment;
-	// 	const transaction = [
-	// 		{
-	// 			_id: commentPostId,
-	// 			"post/comments": ["comment$1"]
-	// 		},
-	// 		{
-	// 			_id: "comment$1",
-	// 			"comment/person": parseInt(posts.currentUserId),
-	// 			"comment/message": newComment
-	// 		}
-	// 	];
 
-	// 	try {
-	// 		const res = await flureeFetch("/transact", transaction);
+	const handleCommentSubmit = async e => {
+		e.preventDefault();
+		let commentPostId = parseInt(e.target.name);
+		let newComment = contextValue.postsAndComments.filter(
+			item => item.postId === parseInt(commentPostId)
+		)[0].newComment;
+		console.log(newComment)
+		console.log(currentUserId)
+		const transaction = [
+			{
+				_id: commentPostId,
+				"post/comments": ["comment$1"]
+			},
+			{
+				_id: "comment$1",
+				"comment/person": parseInt(currentUserId),
+				"comment/message": newComment
+			}
+		];
 
-	// 		refreshPosts(posts.currentUserId);
-	// 		let arrayOfPostsAndComments = posts.postsAndComments; //must refactor
-	// 		let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
-	// 			return {
-	// 				...item,
-	// 				showPostComments:
-	// 					commentPostId === item.postId ? false : item.showPostComments
-	// 			};
-	// 		});
-	// 		let postsAndComments = arrayOfPostsAndCommentsUpdated;
-	// 		setPosts(prevState => ({
-	// 			...prevState,
-	// 			postsAndComments
-	// 		}));
+		try {
+			const res = await flureeFetch("/transact", transaction);
 
-	// 		if (!res) {
-	// 			throw new Error("Error transacting transaction.");
-	// 		}
-	// 	} catch (err) {
-	// 		console.log(err);
-	// 	}
-	// };
+			refreshPosts(currentUserId);
+			let arrayOfPostsAndComments = contextValue.postsAndComments; //must refactor
+			let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
+				return {
+					...item,
+					showPostComments:
+						commentPostId === item.postId ? false : item.showPostComments
+				};
+			});
+			let postsAndComments = arrayOfPostsAndCommentsUpdated;
+			updatePosts({
+				postsAndComments
+			});
+
+			if (!res) {
+				throw new Error("Error transacting transaction.");
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	};
 
 	return (
 		<div>
 			<Header />
 			<div className="timeline-wrapper">
-				{showAddNewPost ? (
 					<div className="add-new-post-textarea-and-post-button-wrapper">
 						<form className="addNewPostForm" onSubmit={handlePostSubmit}>
 							<textarea
@@ -221,9 +227,7 @@ function UserTimelinePage() {
 							</button>
 						</form>
 					</div>
-				) : (
-					""
-				)}
+				
 				{postsAndComments.map(item => (
 					<div className="posts-container">
 						<div className="post-message-comments-likes-icon-container">
@@ -262,13 +266,13 @@ function UserTimelinePage() {
 									<form
 										name={item.postId}
 										className="addCommentForm"
-										//onSubmit={handleCommentSubmit}
+										onSubmit={handleCommentSubmit}
 									>
 										<textarea
 											name={item.postId}
 											className="addNewPost"
 											onFocus={e => handleNewCommentOnFocus(e)}
-											//onChange={handleNewCommentOnChange}
+											onChange={handleNewCommentOnChange}
 											value={item.newComment}
 											placeholder="Leave a comment..."
 										></textarea>
