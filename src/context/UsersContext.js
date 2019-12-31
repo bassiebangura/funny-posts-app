@@ -1,6 +1,6 @@
 import {createContext} from "react";
 const UsersContext = createContext({
-	users: []
+    users: []
 });
 export const UsersProvider = UsersContext.Provider;
 export const UsersConsumer = UsersContext.Consumer;

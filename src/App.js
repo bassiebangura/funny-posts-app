@@ -2,15 +2,21 @@ import React, { useState, useEffect } from "react";
 import { flureeFetch } from "./flureeFetch";
 import { FaRegComments, FaRegThumbsUp } from "react-icons/fa";
 import UsersContext, {UsersProvider} from "./context/UsersContext";
+import PostsContext, { PostsProvider } from "./context/PostsContext";
 import LandingPage from "./screens/LandingPage";
+import UsersPage from "./screens/UsersPage";
+import UserProfile from "./screens/UserProfilePage";
+import UserTimeline from "./screens/UserTimelinePage";
+
 import {
-	BrowserRouter,
+	BrowserRouter as Router,
 	Route,
 	Switch,
 	useLocation,
 	useHistory
 } from "react-router-dom";
 import "./App.css";
+
 
 function App() {
 	const [posts, setPosts] = useState({
@@ -122,8 +128,7 @@ function App() {
 	// 	refreshPosts();
 	// }, [setPosts]);
 
-	const handleSubmit = e => {
-		//console.log(e);
+	const handleViewUserTimeline = e => {
 		refreshPosts(e.target.id);
 		getUsers(e.target.id);
 	};
@@ -363,11 +368,27 @@ function App() {
 	};
 
 	return (
+		<PostsProvider value={posts}>
+			<UsersProvider value={users}>
+				<Router>
+					<Switch>
+						<Route exact path="/">
+							<LandingPage />
+						</Route>
+						<Route exact path="/users">
+							<UsersPage handleOnClick={handleViewUserTimeline} />
+						</Route>
+						<Route path="/users/profile/:id">
+							<UserProfile />
+						</Route>
+						<Route path="/users/timeline/:id">
+							<UserTimeline />
+						</Route>
+					</Switch>
+				</Router>
+			</UsersProvider>
+		</PostsProvider>
 
-    <UsersProvider value={users}>
-      <LandingPage />
-    </UsersProvider>
-    
 		// <div className="App">
 		// 	<header className="App-header">
 		// 		<h1>Funny Post App</h1>
@@ -475,7 +496,7 @@ function App() {
 		// 			{users.map(item => {
 		// 				return (
 		// 					<button
-		// 						onClick={handleSubmit}
+		// onClick={handleViewUserTimeline}
 		// 						id={item._id}
 		// 						key={item._id}
 		// 						className="users-button"

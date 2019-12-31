@@ -19,7 +19,7 @@
 	justify-content: space-around;
 }
 
-.users-container {
+/* .users-container {
 	display: flex;
 	flex-direction: column;
 	align-content: center;
@@ -27,7 +27,7 @@
 	border-radius: 5px;
 	padding: 5px;
 	margin-bottom: auto;
-}
+} */
 
 .users-button {
 	border-radius: 0px;

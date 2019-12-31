@@ -1,28 +1,15 @@
-import React, {useContext} from "react";
-import UsersContext from "../context/UsersContext"
-
+import React from "react";
+import {Link} from "react-router-dom";
+import "../css/landingPage.css";
+import Header from "../components/Header"
 function LandingPage() {
-    let users = useContext(UsersContext)
-    return (
-			<div className="users-container">
-				{users.map(item => {
-					return (
-                        <>
-                        <p>User: {item.fullName}</p>
-                        <button>Profile</button>
-						<button
-							// onClick={handleSubmit}
-							id={item._id}
-							key={item._id}
-							className="users-button"
-							disabled={item.isDisabled}
-						>
-							View {item.fullName}'s Timeline
-						</button>
-                        </>
-					);
-				})}
-			</div>
-		);
+	return (
+		<div>
+			<Header />
+			<h2>
+				<Link to="/users">View Users</Link>
+			</h2>
+		</div>
+	);
 }
 export default LandingPage;
