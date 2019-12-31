@@ -6,7 +6,7 @@ import Header from "../components/Header"
 
 function UsersPage() {
 	let users = useContext(UsersContext);
-	let {refreshPosts} = useContext(PostsContext)
+	//let {refreshPosts} = useContext(PostsContext)
 	return (
 		<div className="landing-page-wrapper">
 			<Header />
@@ -16,7 +16,6 @@ function UsersPage() {
 						<div className="individual-user">
 							<h2>{item.fullName}</h2>
 							<button
-								onClick={() =>refreshPosts(item._id)}
 								id={item._id}
 								key={item._id}
 								className="users-button"

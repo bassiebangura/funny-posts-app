@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect,  } from "react";
 import PostsContext from "../context/PostsContext";
 import { flureeFetch } from "../flureeFetch";
 import { FaRegComments, FaRegThumbsUp } from "react-icons/fa";
@@ -14,8 +14,7 @@ function UserTimelinePage() {
 	} = useContext(PostsContext);
 
 	const { id } = useParams();
-	//refreshPosts(id)
-	console.log(contextValue);
+
 
 	/***********************************************************
 	 ***************** Add Post Section  ***********************
@@ -204,6 +203,35 @@ function UserTimelinePage() {
 			console.log(err);
 		}
 	};
+		const addLikes = async e => {
+		e.preventDefault();
+
+		const postId = parseInt(e.target.id);
+		if (postId) {
+			let currentLikes = postsAndComments.filter(
+				item => item.postId === postId
+			)[0].likes;
+
+			const transaction = [
+				{
+					_id: postId,
+					likes: `#(inc ${currentLikes})`
+				}
+			];
+			try {
+				const res = await flureeFetch("/transact", transaction);
+				refreshPosts(currentUserId);
+				if (!res) {
+					throw new Error("Error transacting transaction.");
+				}
+			} catch (err) {
+				console.log(err);
+			}
+		}
+	};
+		useEffect(() => {
+		refreshPosts(id)
+	}, [refreshPosts])
 
 	return (
 		<div>
@@ -247,7 +275,7 @@ function UserTimelinePage() {
 									<span className="likes-icon">
 										<FaRegThumbsUp
 											id={item.postId}
-											//onClick={addLikes}
+											onClick={addLikes}
 											className="likes-icon-svg"
 										/>
 									</span>
