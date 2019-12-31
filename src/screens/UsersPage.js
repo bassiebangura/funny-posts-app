@@ -1,10 +1,12 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import UsersContext from "../context/UsersContext";
+import PostsContext from "../context/PostsContext";
 import Header from "../components/Header"
 
-function UsersPage({handleOnClick}) {
+function UsersPage() {
 	let users = useContext(UsersContext);
+	let {refreshPosts} = useContext(PostsContext)
 	return (
 		<div className="landing-page-wrapper">
 			<Header />
@@ -12,9 +14,9 @@ function UsersPage({handleOnClick}) {
 				{users.map(item => {
 					return (
 						<div className="individual-user">
-							<button>Profile</button>
+							<h2>{item.fullName}</h2>
 							<button
-								onClick={handleOnClick}
+								onClick={() =>refreshPosts(item._id)}
 								id={item._id}
 								key={item._id}
 								className="users-button"
@@ -28,6 +30,7 @@ function UsersPage({handleOnClick}) {
 			</div>
 		</div>
 	);
+	
 }
 
 export default UsersPage;

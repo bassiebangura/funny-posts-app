@@ -1,8 +1,11 @@
-import React from "react";
+import React, {useContext} from "react";
 import {Link} from "react-router-dom";
 import "../css/landingPage.css";
-import Header from "../components/Header"
+import Header from "../components/Header";
+import PostsContext from "../context/PostsContext"
 function LandingPage() {
+    // let {posts, refreshPosts} = useContext(PostsContext)
+    // console.log(refreshPosts)
 	return (
 		<div>
 			<Header />

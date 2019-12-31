@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { flureeFetch } from "./flureeFetch";
-import { FaRegComments, FaRegThumbsUp } from "react-icons/fa";
+
 import UsersContext, {UsersProvider} from "./context/UsersContext";
 import PostsContext, { PostsProvider } from "./context/PostsContext";
 import LandingPage from "./screens/LandingPage";
@@ -19,27 +19,8 @@ import "./App.css";
 
 
 function App() {
-	const [posts, setPosts] = useState({
-		postsAndComments: [],
-		currentUserId: null,
-		showAddNewPost: false
-	});
-
-	const updatePosts = ({
-		postsAndComments,
-		currentUserId,
-		showAddNewPost,
-		newPost
-	}) =>
-		setPosts(prevState => ({
-			...prevState,
-			postsAndComments,
-			currentUserId,
-			showAddNewPost,
-			newPost
-		}));
-
 	const refreshPosts = async id => {
+    console.log("Who is calling me")
 		const query = {
 			select: [
 				{
@@ -93,26 +74,23 @@ function App() {
 			const { follows, posts } = res;
 			const followsPostsNested = follows.map(item => item.posts);
 			const followsPostsAndComments = followsPostsNested.flat();
-			const postsAndComments = [
-				...posts,
-				...followsPostsAndComments
-			].map(
-        item => ({
-				postId: item._id,
-				message: item.message,
-				comments: item.comments
-					? generateArrayOfCommentsMessage(item.comments)
-					: [],
-				likes: item.likes,
-				totalComments: item.comments
-					? generateArrayOfCommentsMessage(item.comments).length
-					: 0,
-				showPostComments: false,
-				showCommentButton: false,
-				isDisabledCommentButton: true,
-				newComment: ""
-			})
-      );
+			const postsAndComments = [...posts, ...followsPostsAndComments].map(
+				item => ({
+					postId: item._id,
+					message: item.message,
+					comments: item.comments
+						? generateArrayOfCommentsMessage(item.comments)
+						: [],
+					likes: item.likes,
+					totalComments: item.comments
+						? generateArrayOfCommentsMessage(item.comments).length
+						: 0,
+					showPostComments: false,
+					showCommentButton: false,
+					isDisabledCommentButton: true,
+					newComment: ""
+				})
+			);
 			const currentUserId = id;
 			const showAddNewPost = true;
 			updatePosts({
@@ -122,15 +100,65 @@ function App() {
 			});
 		} catch (err) {
 			console.log(err);
+    }
+    
+  };
+  	const updatePosts = ({
+			postsAndComments,
+			currentUserId,
+			showAddNewPost,
+			newPost
+		}) =>
+			setPosts(prevState => ({
+				...prevState,
+				postsAndComments,
+				currentUserId,
+				showAddNewPost,
+				newPost
+			}));
+	// useEffect(() => {
+	// 	posts.refreshPosts();
+	// }, [posts.updatePosts]);
+	const [posts, setPosts] = useState({
+		postsAndComments: [],
+		currentUserId: null,
+    showAddNewPost: false,
+    updatePosts: updatePosts,
+		refreshPosts: refreshPosts
+	});
+
+
+
+	const [users, setUsers] = useState([]);
+
+	const getUsers = async id => {
+		const query = {
+			select: ["_id", "fullName", "handle"],
+			from: "person"
+		};
+
+		try {
+			const res = await flureeFetch("/query", query);
+			if (!res) {
+				throw new Error("Error fetching posts.");
+			}
+			const fullNamesAndId = res.map(item => ({
+				...item,
+				isDisabled: parseInt(id) === parseInt(item._id) ? true : false
+			})); //disable user with current posts showing.
+			setUsers(fullNamesAndId);
+		} catch (err) {
+			console.log(err);
 		}
 	};
-	// useEffect(() => {
-	// 	refreshPosts();
-	// }, [setPosts]);
+	useEffect(() => {
+		getUsers();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [setUsers]);
 
 	const handleViewUserTimeline = e => {
 		refreshPosts(e.target.id);
-		getUsers(e.target.id);
+		//getUsers(e.target.id);
 	};
 
 	const addLikes = async e => {
@@ -160,33 +188,6 @@ function App() {
 			}
 		}
 	};
-
-	const [users, setUsers] = useState([]);
-
-	const getUsers = async id => {
-		const query = {
-			select: ["_id", "fullName", "handle"],
-			from: "person"
-		};
-
-		try {
-			const res = await flureeFetch("/query", query);
-			if (!res) {
-				throw new Error("Error fetching posts.");
-			}
-			const fullNamesAndId = res.map(item => ({
-				...item,
-				isDisabled: parseInt(id) === parseInt(item._id) ? true : false
-			})); //disable user with current posts showing.
-			setUsers(fullNamesAndId);
-		} catch (err) {
-			console.log(err);
-		}
-	};
-	useEffect(() => {
-		getUsers();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [setUsers]);
 
 	/***********************************************************
 	 ***************** Add Post Section  ***********************
@@ -348,9 +349,7 @@ function App() {
 				return {
 					...item,
 					showPostComments:
-						commentPostId === item.postId
-							? false
-							: item.showPostComments
+						commentPostId === item.postId ? false : item.showPostComments
 				};
 			});
 			let postsAndComments = arrayOfPostsAndCommentsUpdated;
