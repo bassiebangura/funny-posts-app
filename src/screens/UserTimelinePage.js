@@ -4,6 +4,7 @@ import { flureeFetch } from "../flureeFetch";
 import { FaRegComments, FaRegThumbsUp } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import Header from "../components/Header";
+import { isTaggedTemplateExpression } from "@babel/types";
 function UserTimelinePage() {
 	const contextValue = useContext(PostsContext);
 	const {
@@ -130,10 +131,6 @@ function UserTimelinePage() {
 		
 		});
 
-		// setShowCommentButton({
-		// 	displayCommentButton: true,
-		// 	isDisabledCommentButton: e.target.value ? false : true
-		// });
 	};
 	const handleDisplayComments = e => {
 		e.preventDefault();
@@ -183,25 +180,21 @@ function UserTimelinePage() {
 		try {
 			const res = await flureeFetch("/transact", transaction);
 
-			let commentPostId = parseInt(e.target.id);
-			let arrayOfPostsAndComments = contextValue.postsAndComments;
-
-		
+			refreshPosts(currentUserId);
+		let arrayOfPostsAndComments = contextValue.postsAndComments;
 		let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
 			return {
 				...item,
-				showPostComments:
-					commentPostId === item.postId
-						? !item.showPostComments
-						: item.showPostComments
+				showPostComments: (commentPostId === item.postId ? true : false)
+					
+					
 			};
 		});
-		const showAddNewPost = true;
+		
 		let postsAndComments = arrayOfPostsAndCommentsUpdated;
 		updatePosts({
 			postsAndComments,
-			currentUserId,
-			showAddNewPost
+			currentUserId
 		});
 			if (!res) {
 				throw new Error("Error transacting transaction.");
@@ -209,7 +202,9 @@ function UserTimelinePage() {
 		} catch (err) {
 			console.log(err);
 		}
-	
+			
+		
+
 	};
 		const addLikes = async e => {
 		e.preventDefault();
@@ -240,7 +235,7 @@ function UserTimelinePage() {
 		useEffect(() => {
 		refreshPosts(id)
 	
-	}, [refreshPosts])
+	}, [])
 
 	return (
 		<div>
