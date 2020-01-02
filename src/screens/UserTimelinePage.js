@@ -92,6 +92,7 @@ function UserTimelinePage() {
 		let commentPostId = parseInt(e.target.name);
 		let arrayOfPostsAndComments = contextValue.postsAndComments;
 		let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
+			console.log(item)
 			return {
 				...item,
 				isDisabledCommentButton: commentPostId === item.postId ? true : false,
@@ -114,6 +115,7 @@ function UserTimelinePage() {
 		let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
 			return {
 				...item,
+				showCommentButton: commentPostId === item.postId ? true : false,
 				isDisabledCommentButton: e.target.value ? false : true,
 				newComment:
 					commentPostId === item.postId ? newCommentValue : item.newComment
@@ -123,8 +125,9 @@ function UserTimelinePage() {
 		let currentUserId = contextValue.currentUserId// we add currentUserId because the updatePosts fxn is expecting it if not it will be undefined
 		let postsAndComments = arrayOfPostsAndCommentsUpdated;
 		updatePosts({
-			currentUserId,
-			postsAndComments
+				postsAndComments,
+			currentUserId
+		
 		});
 
 		// setShowCommentButton({
@@ -165,8 +168,6 @@ function UserTimelinePage() {
 		let newComment = contextValue.postsAndComments.filter(
 			item => item.postId === parseInt(commentPostId)
 		)[0].newComment;
-		console.log(newComment)
-		console.log(currentUserId)
 		const transaction = [
 			{
 				_id: commentPostId,
@@ -182,26 +183,33 @@ function UserTimelinePage() {
 		try {
 			const res = await flureeFetch("/transact", transaction);
 
-			refreshPosts(currentUserId);
-			let arrayOfPostsAndComments = contextValue.postsAndComments; //must refactor
-			let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
-				return {
-					...item,
-					showPostComments:
-						commentPostId === item.postId ? false : item.showPostComments
-				};
-			});
-			let postsAndComments = arrayOfPostsAndCommentsUpdated;
-			updatePosts({
-				postsAndComments
-			});
+			let commentPostId = parseInt(e.target.id);
+			let arrayOfPostsAndComments = contextValue.postsAndComments;
 
+		
+		let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
+			return {
+				...item,
+				showPostComments:
+					commentPostId === item.postId
+						? !item.showPostComments
+						: item.showPostComments
+			};
+		});
+		const showAddNewPost = true;
+		let postsAndComments = arrayOfPostsAndCommentsUpdated;
+		updatePosts({
+			postsAndComments,
+			currentUserId,
+			showAddNewPost
+		});
 			if (!res) {
 				throw new Error("Error transacting transaction.");
 			}
 		} catch (err) {
 			console.log(err);
 		}
+	
 	};
 		const addLikes = async e => {
 		e.preventDefault();
@@ -231,6 +239,7 @@ function UserTimelinePage() {
 	};
 		useEffect(() => {
 		refreshPosts(id)
+	
 	}, [refreshPosts])
 
 	return (
@@ -291,11 +300,7 @@ function UserTimelinePage() {
 									  ))
 									: ""}
 								<div className="add-new-comment-textarea-and-comment-button-wrapper">
-									<form
-										name={item.postId}
-										className="addCommentForm"
-										onSubmit={handleCommentSubmit}
-									>
+								
 										<textarea
 											name={item.postId}
 											className="addNewPost"
@@ -306,16 +311,18 @@ function UserTimelinePage() {
 										></textarea>
 										{item.showCommentButton ? (
 											<button
-												disabled={item.isDisabledCommentButton}
+												name={item.postId}
+												onClick={handleCommentSubmit}
 												className="addNewPostButton"
-												type="submit"
+												disabled={item.isDisabledCommentButton}
+												
 											>
 												Comment
 											</button>
 										) : (
 											""
 										)}
-									</form>
+									
 								</div>
 							</div>
 						) : (

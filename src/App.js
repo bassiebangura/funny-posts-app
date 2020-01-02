@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { flureeFetch } from "./flureeFetch";
 
-import UsersContext, {UsersProvider} from "./context/UsersContext";
-import PostsContext, { PostsProvider } from "./context/PostsContext";
+import {UsersProvider} from "./context/UsersContext";
+import { PostsProvider } from "./context/PostsContext";
 import LandingPage from "./screens/LandingPage";
 import UsersPage from "./screens/UsersPage";
-import UserProfile from "./screens/UserProfilePage";
+import UserProfilePage from "./screens/UserProfilePage";
 import UserTimeline from "./screens/UserTimelinePage";
 
 import {
@@ -86,7 +86,6 @@ function App() {
 						: 0,
 					showPostComments: false,
 					showCommentButton: false,
-					isDisabledCommentButton: true,
 					newComment: ""
 				})
 			);
@@ -130,8 +129,17 @@ function App() {
 
 	const getUsers = async id => {
 		const query = {
-			select: ["_id", "fullName", "handle"],
-			from: "person"
+			    "select": [
+        "_id",
+        "fullName",
+        "handle",
+        "age",
+        {
+            "follows": [
+                "fullName"]
+        }
+        ],
+    "from": "person"
 		};
 
 		try {
@@ -140,9 +148,8 @@ function App() {
 				throw new Error("Error fetching posts.");
 			}
 			const fullNamesAndId = res.map(item => ({
-				...item,
-				isDisabled: parseInt(id) === parseInt(item._id) ? true : false
-			})); //disable user with current posts showing.
+				...item
+			})); 
 			setUsers(fullNamesAndId);
 		} catch (err) {
 			console.log(err);
@@ -153,10 +160,7 @@ function App() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [setUsers]);
 
-	const handleViewUserTimeline = e => {
-		refreshPosts(e.target.id);
-		//getUsers(e.target.id);
-	};
+	
 
 
 	return (
@@ -168,10 +172,10 @@ function App() {
 							<LandingPage />
 						</Route>
 						<Route exact path="/users">
-							<UsersPage handleOnClick={handleViewUserTimeline} />
+							<UsersPage  />
 						</Route>
 						<Route path="/users/profile/:id">
-							<UserProfile />
+							<UserProfilePage />
 						</Route>
 						<Route path="/users/timeline/:id">
 							<UserTimeline />
