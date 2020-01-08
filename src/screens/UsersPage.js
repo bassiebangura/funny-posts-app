@@ -1,5 +1,6 @@
 import React, { useContext} from "react";
 import { Link } from "react-router-dom";
+import "../css/usersPage.css";
 import UsersContext from "../context/UsersContext";
 //import PostsContext from "../context/PostsContext";
 import Header from "../components/Header"
@@ -14,14 +15,14 @@ function UsersPage() {
 				{users.map(item => {
 					return (
 						<div className="individual-user" key={item._id}>
-							<p>
-								<Link to={`/users/profile/${item._id}`}> View {item.fullName}'s Profile</Link>
+							<p className="users-link">
+								<Link style={{ textDecoration: 'none' }} to={`/users/profile/${item._id}`}> View {item.fullName}'s Profile</Link>
 							</p>
 							<p
 								id={item._id}
-				
+								className="users-link"
 							>
-								<Link to={`/users/timeline/${item._id}`}> View {item.fullName}'s Timeline</Link>
+								<Link style={{ textDecoration: 'none' }} to={`/users/timeline/${item._id}`}> View {item.fullName}'s Timeline</Link>
 							</p>
 						</div>
 					);

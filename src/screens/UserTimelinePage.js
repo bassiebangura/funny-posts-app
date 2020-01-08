@@ -16,7 +16,6 @@ function UserTimelinePage() {
 
 	const { id } = useParams();
 
-
 	/***********************************************************
 	 ***************** Add Post Section  ***********************
 	 ***********************************************************/
@@ -151,6 +150,7 @@ function UserTimelinePage() {
 		});
 		const showAddNewPost = true;
 		let postsAndComments = arrayOfPostsAndCommentsUpdated;
+			
 		updatePosts({
 			postsAndComments,
 			currentUserId,
@@ -180,22 +180,26 @@ function UserTimelinePage() {
 		try {
 			const res = await flureeFetch("/transact", transaction);
 
-			refreshPosts(currentUserId);
-		let arrayOfPostsAndComments = contextValue.postsAndComments;
-		let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
-			return {
-				...item,
-				showPostComments: (commentPostId === item.postId ? true : false)
-					
-					
-			};
-		});
 		
-		let postsAndComments = arrayOfPostsAndCommentsUpdated;
-		updatePosts({
-			postsAndComments,
-			currentUserId
-		});
+		refreshPosts(currentUserId, commentPostId)
+		// let arrayOfPostsAndComments = contextValue.postsAndComments;
+		// let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
+		// 	return {
+		// 		...item,
+		// 		showPostComments: commentPostId === item.postId ? true : false
+					
+					
+		// 	};
+		// });
+	
+		// let postsAndComments = arrayOfPostsAndCommentsUpdated;
+		// updatePosts({
+		// 	postsAndComments,
+		// 	currentUserId
+		// });
+			
+	
+	
 			if (!res) {
 				throw new Error("Error transacting transaction.");
 			}
@@ -203,7 +207,7 @@ function UserTimelinePage() {
 			console.log(err);
 		}
 			
-		
+	
 
 	};
 		const addLikes = async e => {

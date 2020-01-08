@@ -1,0 +1,18 @@
+body {
+    margin: 0;
+}
+
+.user-profile-page {
+    margin: auto;
+    border: 1px solid #444;
+    max-width: 450px;
+    margin-top: 10px;
+    text-align: center;
+    padding: 5px;
+    padding-bottom: 8px;
+    border-radius: 32px;
+}
+
+.users-link {
+    margin: 4px 0px 4px 0px;
+}

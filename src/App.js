@@ -19,7 +19,7 @@ import "./App.css";
 
 
 function App() {
-	const refreshPosts = async id => {
+	const refreshPosts = async (id, commentPostId) => {
 		const query = {
 			select: [
 				{
@@ -84,7 +84,7 @@ function App() {
 					totalComments: item.comments
 						? generateArrayOfCommentsMessage(item.comments).length
 						: 0,
-					showPostComments: false,
+					showPostComments: item._id === parseInt(commentPostId) ? true: false,
 					showCommentButton: false,
 					newComment: ""
 				})

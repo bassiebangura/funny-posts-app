@@ -80,6 +80,13 @@
 	},
 	{
 		"_id": "_predicate",
+		"name": "post/instant",
+		"doc": "The instant in time when post was posted.",
+		"type": "instant",
+		"index": true
+	},
+	{
+		"_id": "_predicate",
 		"name": "comment/message",
 		"doc": "A comment's content(message).",
 		"type": "string"
