@@ -26,6 +26,7 @@ function App() {
 					posts: [
 						"likes",
 						"message",
+						"instant",
 						{
 							comments: [
 								{
@@ -70,6 +71,7 @@ function App() {
 			if (!res) {
 				throw new Error("Error fetching posts.");
 			}
+			console.log(res)
 			const { follows, posts } = res;
 			const followsPostsNested = follows.map(item => item.posts);
 			const followsPostsAndComments = followsPostsNested.flat();

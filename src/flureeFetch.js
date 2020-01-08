@@ -16,33 +16,7 @@ function parseJSON(response) {
 	});
 }
 
-// function newToken() {
-// 	return fetch(`${serverURL}get-fluree-token`, { method: "GET" })
-// 		.then(parseJSON)
-// 		.then(res => {
-// 			let token = res.json.token;
-// 			localStorage.setItem("trustClarityToken", token);
-// 			// debugger;
-// 			return token;
-// 		})
-// 		.catch(err => {
-// 			// debugger;
-// 			let errorMessage = (err.json && err.json.message) || err;
-// 			throw new Error(errorMessage);
-// 		});
-// }
 
-// function getToken() {
-// 	return new Promise(function(resolve, reject) {
-// 		let token = localStorage.getItem("trustClarityToken");
-// 		if (!token) {
-// 			// debugger;
-// 			resolve(newToken());
-// 		} else {
-// 			resolve(token);
-// 		}
-// 	});
-// }
 
 function fetchResp(fullUri, fetchOpts, isDev) {
 	return fetch(fullUri, fetchOpts)
@@ -60,7 +34,7 @@ var flureeFetch = (uri, body) => {
 	const gateway = isDev
 		? "http://localhost:8080/fdb"
 		: "https://db.flur.ee/api/db";
-	const db = isDev ? "/test/post-appv5" : "/tcdemo/test";
+	const db = isDev ? "/test/post-appv6" : "/tcdemo/test";
 	let fullUri;
 	if (uri === "/new-db") {
 		fullUri = gateway + uri;

@@ -4,7 +4,7 @@ import { flureeFetch } from "../flureeFetch";
 import { FaRegComments, FaRegThumbsUp } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import Header from "../components/Header";
-import { isTaggedTemplateExpression } from "@babel/types";
+
 function UserTimelinePage() {
 	const contextValue = useContext(PostsContext);
 	const {
@@ -57,7 +57,8 @@ function UserTimelinePage() {
 				"post/message": newPostMessage,
 				"post/person": parseInt(currentUserId),
 				"post/likes": 0,
-				"post/comments": []
+				"post/comments": [],
+				"post/instant": "#(now)"
 			},
 			{
 				_id: parseInt(currentUserId),
@@ -182,21 +183,6 @@ function UserTimelinePage() {
 
 		
 		refreshPosts(currentUserId, commentPostId)
-		// let arrayOfPostsAndComments = contextValue.postsAndComments;
-		// let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
-		// 	return {
-		// 		...item,
-		// 		showPostComments: commentPostId === item.postId ? true : false
-					
-					
-		// 	};
-		// });
-	
-		// let postsAndComments = arrayOfPostsAndCommentsUpdated;
-		// updatePosts({
-		// 	postsAndComments,
-		// 	currentUserId
-		// });
 			
 	
 	
@@ -267,6 +253,7 @@ function UserTimelinePage() {
 				{postsAndComments.map(item => (
 					<div className="posts-container">
 						<div className="post-message-comments-likes-icon-container">
+							<p>Posted by </p>
 							<p className="post-message left-align">{item.message}</p>
 							<div className="comments-likes-wrapper left-align">
 								<div className="comments-icon-total-comments-wrapper">
