@@ -28,6 +28,9 @@ function App() {
 						"message",
 						"instant",
 						{
+						   "person": ["fullName"] 
+						},
+						{
 							comments: [
 								{
 									"comment/person": ["fullName"]
@@ -44,6 +47,10 @@ function App() {
 							posts: [
 								"likes",
 								"message",
+								"instant",
+								{
+						   		"person": ["fullName"] 
+								},
 								{
 									comments: [
 										{
@@ -61,9 +68,10 @@ function App() {
 		};
 
 		let generateArrayOfCommentsMessage = arrayOfComments => {
-			let mapping = arrayOfComments.map(item => {
-				return item.message;
-			});
+			let mapping = arrayOfComments.map(item => ({
+					message: item.message,
+					person: item["comment/person"].fullName
+				}));
 			return mapping;
 		};
 		try {
@@ -71,13 +79,15 @@ function App() {
 			if (!res) {
 				throw new Error("Error fetching posts.");
 			}
-			console.log(res)
+		
 			const { follows, posts } = res;
 			const followsPostsNested = follows.map(item => item.posts);
 			const followsPostsAndComments = followsPostsNested.flat();
 			const postsAndComments = [...posts, ...followsPostsAndComments].map(
 				item => ({
 					postId: item._id,
+					date: (new Date (item.instant)).toLocaleString(),
+					person: item.person.fullName,
 					message: item.message,
 					comments: item.comments
 						? generateArrayOfCommentsMessage(item.comments)
@@ -91,6 +101,7 @@ function App() {
 					newComment: ""
 				})
 			);
+			
 			const currentUserId = id;
 			const showAddNewPost = true;
 			updatePosts({

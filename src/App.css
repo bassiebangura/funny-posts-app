@@ -66,6 +66,11 @@
 }
 
 /******* post section ******/
+.post-person {
+	font-style: italic;
+	font-size: 0.6em;
+	padding-left: 8px;
+}
 .post-message {
   text-align: left;
   padding-left: 8px;
@@ -123,6 +128,8 @@
   font-style: italic;
   padding: 4px;
   width: max-content;
+  margin-bottom: 0.15em;
+  margin-top: 0.8em;
 }
 
 .addComment {
@@ -131,8 +138,15 @@
 }
 .add-new-comment-textarea-and-comment-button-wrapper {
   width: max-content;
+  margin-top: 0.7em;
 }
-
+.person-comment{
+font-style: italic;
+	font-size: 0.6em;
+	padding-left: 8px;
+	margin-top: 0;
+	margin-bottom: 0;
+}
 
 /****** Speech Bubble  ********/
 .speech-bubble {

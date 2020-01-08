@@ -93,7 +93,7 @@ function UserTimelinePage() {
 		let commentPostId = parseInt(e.target.name);
 		let arrayOfPostsAndComments = contextValue.postsAndComments;
 		let arrayOfPostsAndCommentsUpdated = arrayOfPostsAndComments.map(item => {
-			console.log(item)
+			//console.log(item)
 			return {
 				...item,
 				isDisabledCommentButton: commentPostId === item.postId ? true : false,
@@ -253,7 +253,7 @@ function UserTimelinePage() {
 				{postsAndComments.map(item => (
 					<div className="posts-container">
 						<div className="post-message-comments-likes-icon-container">
-							<p>Posted by </p>
+							<p className="post-person">Posted by {item.person} <span>{item.date}</span></p>
 							<p className="post-message left-align">{item.message}</p>
 							<div className="comments-likes-wrapper left-align">
 								<div className="comments-icon-total-comments-wrapper">
@@ -282,7 +282,10 @@ function UserTimelinePage() {
 							<div className="post-comments">
 								{item.totalComments
 									? item.comments.map(item => (
-											<p className="comment-message speech-bubble">{item}</p>
+										<>
+											<p className="comment-message speech-bubble">{item.message}</p>
+											<p className="person-comment">comment by {item.person}</p>
+										</>
 									  ))
 									: ""}
 								<div className="add-new-comment-textarea-and-comment-button-wrapper">
