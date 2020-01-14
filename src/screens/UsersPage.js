@@ -11,6 +11,7 @@ function UsersPage() {
 	return (
 		<div className="landing-page-wrapper">
 			<Header />
+			<p style={{margin: "auto", marginTop: "10px", textAlign: "center"}}>Here is a list of the current users.</p>
 			<div className="users-container">
 				{users.map(item => {
 					return (

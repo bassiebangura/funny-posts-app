@@ -284,7 +284,7 @@ function UserTimelinePage() {
 									? item.comments.map(item => (
 										<>
 											<p className="comment-message speech-bubble">{item.message}</p>
-											<p className="person-comment">comment by {item.person}</p>
+											<p className="person-comment">By {item.person}</p>
 										</>
 									  ))
 									: ""}

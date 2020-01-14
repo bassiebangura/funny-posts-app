@@ -11,9 +11,7 @@ import UserTimeline from "./screens/UserTimelinePage";
 import {
 	BrowserRouter as Router,
 	Route,
-	Switch,
-	useLocation,
-	useHistory
+	Switch
 } from "react-router-dom";
 import "./App.css";
 
@@ -27,9 +25,9 @@ function App() {
 						"likes",
 						"message",
 						"instant",
-						{
-						   "person": ["fullName"] 
-						},
+						// {
+						//    "person": ["fullName"] 
+						// },
 						{
 							comments: [
 								{
@@ -79,7 +77,7 @@ function App() {
 			if (!res) {
 				throw new Error("Error fetching posts.");
 			}
-		
+			console.log(res)
 			const { follows, posts } = res;
 			const followsPostsNested = follows.map(item => item.posts);
 			const followsPostsAndComments = followsPostsNested.flat();
@@ -87,7 +85,7 @@ function App() {
 				item => ({
 					postId: item._id,
 					date: (new Date (item.instant)).toLocaleString(),
-					person: item.person.fullName,
+					// person: item.person.fullName,
 					message: item.message,
 					comments: item.comments
 						? generateArrayOfCommentsMessage(item.comments)
@@ -101,7 +99,7 @@ function App() {
 					newComment: ""
 				})
 			);
-			
+			//console.log(postsAndComments)
 			const currentUserId = id;
 			const showAddNewPost = true;
 			updatePosts({

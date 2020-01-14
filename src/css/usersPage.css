@@ -1,6 +1,6 @@
 .users-container {
     margin: auto;
-    margin-top: 10px;
+    margin-top: 20px;
     padding: 1em;
     width: 90%;
 	border: 1px solid#444;
@@ -8,9 +8,18 @@
     flex-direction: row;
     flex-flow: wrap;
     justify-content: space-evenly;
-
-
 }
+
+
 .individual-user {
     padding: 5px;
+    margin-top: 10px;
+    min-width: 300px;
+}
+
+.users-link{
+    background-color: lightblue;
+    padding: 5px;
+    border-radius: 32px;
+   
 }
